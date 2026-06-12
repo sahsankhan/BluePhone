@@ -1,0 +1,42 @@
+common:
+  base_url: "https://e7mknbtv0d.execute-api.us-west-2.amazonaws.com/ccqa"
+
+  headers:
+    Authorization: "Bearer vTJGrJVBOckFbUyEfS1cZL0RmMFppCMLkywFI7huePyAtZ58Rlt8q2s4H1cHeLu4"
+    x-auth-token: "UXB9bLaZu99cKsDdAoX0OgKSXCKWXeXVcDowF9Q14zk7A8pGVCtqd4xtfslVztHB"
+    Content-Type: "application/json"
+
+  default_payload:
+    account: "097041003708"
+    region: "us-west-2"
+    version: "2_9_3"
+    media: "SCRIPT2"
+    duration: "5000"
+
+requests:
+  make_primary_inbound_call:
+    endpoint: "/make_calls"
+    cmd: "UP"
+    type: "OB"
+
+  make_secondary_inbound_call:
+    endpoint: "/make_calls"
+    cmd: "UP"
+    type: "OB"
+
+  make_primary_outbound_call:
+    endpoint: "/make_calls"
+    cmd: "UP"
+    type: "IB"
+
+  make_secondary_outbound_call:
+    endpoint: "/make_calls"
+    cmd: "UP"
+    type: "IB"
+
+  remove_container:
+    endpoint: "/remove_container"
+    cmd: "DOWN"
+
+  derive_sip_logs:
+    endpoint: "/derive_logs"

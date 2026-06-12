@@ -1,0 +1,13 @@
+output/
+venv/
+report.html
+log.html
+output.xml
+stdout.txt
+results/
+.github
+*.png
+panacea_env
+__pycache__/
+TestResults/
+.appium-tools/node_modules/

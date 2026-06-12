@@ -1,0 +1,6 @@
+devices:
+  - DVT_DEVICE_109
+testsuite:
+  - 1.5-APK-AUTOMATION\TestcaseSuite\Smoke\TMCC_4413.robot
+robot_files:
+  - TMCC_4413.robot

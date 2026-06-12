@@ -1,0 +1,292 @@
+devices:
+  device_name: ""
+
+countly:
+  base_url: "https://clearcaptions.count.ly"
+  api_key: "13e9cdf3c59f1e86cea469cd80698bd9"
+  app_id: "666210640823929bbb75e892"
+
+user:
+  firstName: "Test"
+  lastName: "user1"
+  phoneNumber: "9163670189"
+  phoneNumber2: "2163679821"
+  phoneNumber3: "2163679822"
+  avtar: "Tu"
+  verificationName: "Test user1"
+  VerificationNumber: "(216) 367-9828"
+  VerificationNumber2: "(216) 367-9821"
+  VerificationNumber3: "(216) 367-9822"
+  call_log: "Test user1"
+  verificationName2: "Test_01 user2"
+  createContactFirstName: "Test_01"
+  createContactLastName: "user2"
+  createContactPhoneNumber: "1234567890"
+  createContactPhoneNumber2: "6265534154"
+  firstName2: "Caller1"
+  verificationName4: "Caller1"
+  verificationSupportName: "ClearCaptions"
+  updatedFirstName: "NewFName"
+  updatedLastName: "NewLName"
+
+
+text_values:
+  text: "testingContact"
+  Street_address: "15 Hacker Wy"
+  Zip_Code: "94025"
+  home: "HOME"
+  contacts: "CONTACTS"
+  callLog: "CALL LOG"
+  favorites: "FAVORITES"
+  voicemail: "VOICEMAIL"
+  settings: "SETTINGS"
+  help: "HELP"
+  ADD: "ADD"
+  CANCEL: "CANCEL"
+  OVERVIEW: "OVERVIEW"
+  USING_CAPTIONS: "USING CAPTIONS"
+  CONTACTS_FAVORITES: "CONTACTS & FAVORITES"
+  CALL_LOG: "CALL LOG"
+  OutgoingCall: "OutgoingCall"
+  VOICEMAIL: "VOICEMAIL"
+  SETTINGS: "SETTINGS"
+  ADJUSTING_VOLUME: "ADJUSTING VOLUME"
+  HOME: "HOME"
+  There_are_no_calls: "There are no calls"
+  EDIT: "EDIT"
+  Back_Button: "Back Button"
+  Search: 'Search Bar'
+  AVTAR_NAME: "Tu"
+  DELETE: 'Delete'
+  YES_btn: "YES"
+  CLOSE: 'CLOSE'
+  heart: "HEART"
+  addtofavpage: "Choose a Contact to Add to Favorites"
+  connecting_to_captioner: "Connecting to Captioner…"
+  search_field_text: "I'm looking for…"
+  clearcaptions_contact: "ClearCaptions"
+  Drag_to_reorder: "Drag to reorder"
+  phone_instructions: "Tap the grey heart(s) and\nthen ADD to update Favorites"
+  text_message: "HOME /STAGE/"
+  main_screen_text: "CONTACTS"
+  contacts_call_icon: 'contacts_call_icon'
+  MISSED_CALL_LOG: 'missed call icon'
+  MISSED_CALL_TIME: 'TIME'
+  ARROW_BTN: 'ARROW_BTN'
+  MISSED_CALL_CONTACT: 'MISSED CALL'
+  MISSED_AVTAR: 'AVTAR'
+  CALL_BACK_BTN: 'CALL BACK BUTTON'
+  DATE_TIME: 'DATE & TIME'
+  RE_CAPTION: 'RE-CAPTION'
+  MISSED_CALL_READ: 'MissedCallRead'
+  Font: "FONT"
+  Speed: "SPEED"
+  Dialpad_message: "LIFT HANDSET OR PRESS\nSPEAKER TO CALL"
+  MERGED: "MERGED CALL"
+  access_code: "test"
+  dialing: "DIALING"
+  dial_a_number: "DIAL A NUMBER"
+  ERROR_TEXT_PRE_DIAL_SCREEN: "CAPTIONS NOT ENABLED. TAP THE FIX NOW BUTTON ABOVE."
+  PLAY_BTN : ""
+  25_digit_number: "1234567890123456789012345"
+  50_character_string: "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx"
+
+button_presscodes:
+  save: 1000
+  cancel: "1001"
+  hangup: 79
+  next: "-33"
+
+edit_user:
+  edit_firstName: "Test"
+  edit_lastName: "user2"
+  edit_avatar: "TU_2"
+  edit_phoneNumber: "3164690821"
+  EditVerificationName: "Test_user2"
+
+favorites:
+  firstName: "Test"
+  lastName: "user2"
+  fullname: "Test user2"
+  phoneNumber: "9166774956"
+  contactName: "Test_user2"
+  ADD: "ADD"
+  EDIT: "EDIT"
+
+verification:
+  name: "Test_user2"
+  number: "(216) 367-9828"
+  edit_name: "Update_user"
+  edit_number: "(316) 469-0821"
+
+dropdowns:
+  mobile: "MOBILE"
+  work: "WORK"
+  home: "HOME"
+  other: "OTHER"
+
+tabs:
+  overview: "OVERVIEW"
+  using_caption: "USING CAPTIONS"
+  contacts_and_favorites: "CONTACTS & FAVORITES"
+  call_log: "CALL LOG"
+  voicemail: "VOICEMAIL"
+  settings: "SETTINGS"
+  adjusting_volume: "ADJUSTING VOLUME"
+
+favorites_locator:
+  favContact: "Shankey Mi..."
+
+
+SettingsText:
+  phone: "PHONE"
+  My_account: "MY ACCOUNT"
+  network: "NETWORK"
+  display: "DISPLAY"
+  sounds: "SOUNDS"
+  flasher:  "FLASHER"
+  date_time:  "DATE & TIME"
+  setupWizard:  "Are you sure you want to\nenter Setup Wizard?"
+  reset_phone:  "RESET PHONE"
+  checking_update: "Checking software…"
+  about: "ABOUT"
+  cancel: "CANCEL"
+  emergency: "EMERGENCY ALERTS"
+  wifi_networks: "WiFi Network"
+  Hidden_menu: "Hidden menu"
+  firstname: "firstname"
+  lastname: "lastname"
+  close: "CLOSE"
+  phone_capacity: "PHONE CAPACITY"
+
+
+FavoriteAppText:
+  add_to_fav: "ADD TO FAVORITES"
+  avtarText: 'Tu'
+  contact: 'Test user1'
+  favText: 'Test user1'
+  Add_Favorites: 'Add Favorites'
+
+VoiceMail:
+  You have no messages: "You have no messages."
+  voicemail: 'VOICE MAIL'
+  Voicemail_Arrow: 'arrowBtn'
+  Re_caption: 'RE-CAPTION'
+  Tapping_contact: 'Tapping contact'
+  Tapping call now: 'Tapping call now'
+CallLog:
+  call_log: "(916) 677-4956"
+  call_number: "(626) 557-0794"
+  Missed_call: "MISSED CALL"
+  CAPTIONED_CALLS: "CAPTIONED CALLS"
+
+
+keycodes:
+  KEY_EVENT_0: 7
+  KEY_EVENT_1: 8
+  KEY_EVENT_2: 9
+  KEY_EVENT_3: 10
+  KEY_EVENT_4: 11
+  KEY_EVENT_5: 12
+  KEY_EVENT_6: 13
+  KEY_EVENT_7: 14
+  KEY_EVENT_8: 15
+  KEY_EVENT_9: 16
+  KEY_EVENT_STAR: "17"
+  KEY_EVENT_HASH: "18"
+  KEY_EVENT_AT_SIGN: "77"
+  KEY_VOLUME_UP: "24"
+  KEY_VOLUME_DOWN: "25"
+  KEY_CC: "175"
+  KEY_VOICEMAIL: "60"
+  KEY_SPEAKER: "131"
+  KEY_MUTE: "91"
+  KEY_OFF_HOOK: "242"  # Adjusted for safety (use correct keycode)
+  KEY_ON_HOOK: "133"
+  KEYCODE_CALL: "5"
+  Home_keyCode: "3"
+  KEYPAD_CANCEL: "1001"
+  KEYPAD_HIDE: "4"
+  KEY_NEXT: "66"
+
+
+wait:
+  seconds: '0.5'
+  max_wait_time_VM: '240'
+  poll_interval: '5'
+  context_duration: '180'
+  retries: 3
+  interval: 3
+  context_duration_ob: '1800'
+  Context_duration_miss_call: '60'
+
+caption_failure_keywords:
+  - "experiencing technical difficulties"
+  - "OOPS"
+  - "not available"
+  - "BUSY SIGNAL"
+
+audio_caption_script:
+  script_2: "2 Alex and Jason real talk. Hey Jason, it's been ages. How's it going buddy? No way. I remember how much you loved fishing back in the day. Tell me everything. Have you caught any big ones? Yeah, that's incredible Jason. You always had a knack for landing the big ones. Any photos to show off your impressive catch? Wow, that's a trophy worth worthy bass my friend. You definitely got your fishing skills intact. Unfortunately, not as much as I'd like. I've been pretty busy lately, but I managed to squeeze an fishing trip last month. Didn't catch anything remarkable though. Just a few decent sized trout. Actually yes. I experimented with some fly fishing techniques I learned from a friend. It was a whole new experience for me. I had to say I enjoyed the change of pace. Absolutely Jason, we need to make that happen. A fishing trip with you is always a blast. Maybe we can even organize a weekend getaway with the whole gang. Awesome, I'll start checking out some potential fishing spots and accommodations. We'll make it a memorable trip. Definitely Jason, life gets busy, but we can't forget the things that bring us joy and keep our friendship strong. Agreed Jason Well, I won't keep you any longer. Enjoy your next fishing adventure and let's stay in touch. Thanks Jason. Take care and catch you later. Bye."
+  script_3: "2 Alex and Jason real talk. Hey Jason, it's been ages. How's it going buddy? No way. I remember how much you loved fishing back in the day. Tell me everything. Have you caught any big ones? Yeah, that's incredible Jason. You always had a knack for landing the big ones. Any photos to show off your impressive catch? Wow, that's a trophy worth worthy bass my friend. You definitely got your fishing skills intact. Unfortunately, not as much as I'd like. I've been pretty busy lately, but I managed to squeeze an fishing trip last month. Didn't catch anything remarkable though. Just a few decent sized trout. Actually yes. I experimented with some fly fishing techniques I learned from a friend. It was a whole new experience for me. I had to say I enjoyed the change of pace. Absolutely Jason, we need to make that happen. A fishing trip with you is always a blast. Maybe we can even organize a weekend getaway with the whole gang. Awesome, I'll start checking out some potential fishing spots and accommodations. We'll make it a memorable trip. Definitely Jason, life gets busy, but we can't forget the things that bring us joy and keep our friendship strong. Agreed Jason Well, I won't keep you any longer. Enjoy your next fishing adventure and let's stay in touch. Thanks Jason. Take care and catch you later. Bye."
+
+vm_call_time: None
+
+voicemail_keywords:
+  - "the user navigates to voicemail"
+  - "message will appear in voicemail"
+  - "the play button is tapped"
+  - "the selected message should begin played successfully"
+
+screen_time_keywords:
+  - "screen sleep time is set to 1 minute"
+  - "user put the device in sleep mode"
+
+add_contact_keywords:
+  - "taps on a favorite"
+
+secure_data_key:
+  fernet_key: ""
+  encryptyed_data: ""
+
+xray_data:
+  project_key: "APK20"
+  test_execution_key: "APK20-5384"
+  client_id: "5BDA810539CD456F8D136C27D1641165"
+  client_secret: "84edc2569f6ea403eb858c9ec4eefd5167d4f6359aea38424b1ada3175ce6acb"
+  upload_artifacts: True 
+  supported_formats: [".html"]
+  validate_gherkin: False
+
+jira_data:
+  jira_base_url: "https://clearcaptions.atlassian.net/rest/api/2"
+  email: "xrayapk20-service-bot-xd5688a2eu@serviceaccount.atlassian.com"
+  api_token: "ATSTT3xFfGF0ZExCtdEx32u6A-gPVMpiGr0pS4NI3MMOZVSSbEgbxQjZRhi3vcXvNVPBl_ChOJWe06_be3CzKNUDstFqKGgtieLQIBbMeYwnNzkClmIxa3lHo8cigQE7Qu5I6zpMv0_W_w13LRTNOmEW12l9psefD9nc58D4lpiE_ngMS2jeqqU=D8CA09DC"
+  test_execution_key: "APK20-5384"
+  success_status: ""
+  fail_status: ""
+
+opensearch_data:
+  url: ""
+  test_execution_data_index: "" 
+  test_execution_log_data_index: ""
+  real_time_test_metadata_index: ""
+  username: "" 
+  password: ""
+  verify_certs: False
+  use_ssl: True
+  ssl_show_warn: False
+
+aws_data:
+  aws_access_key: ""
+  aws_secret_key: ""
+  aws_region: ''
+  aws_s3_bucket_name: ""
+  aws_s3_bucket_object_key: ""
+
+panacea_core_data:  
+  max_level: 1
+  multiple_suites: False
+
+log_lens_data:
+  port: 8279

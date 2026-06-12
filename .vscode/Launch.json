@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "RobotCode: Default",
+            "type": "robotcode",
+            "request": "launch",
+            "purpose": "default",
+            "args": [
+                "--prerunmodifier", "hooksloader.HooksLoader",
+                "--listener", "hooksimporter.HooksImporter"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/panacea_env/Lib/site-packages/FrameworkHooks",
+                "RUNNING_FROM_RUNNER": "False"
+            },
+            "presentation": {
+                "hidden": true
+            }
+        }
+    ]
+}
