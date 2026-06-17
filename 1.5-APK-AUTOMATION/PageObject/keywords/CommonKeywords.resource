@@ -14,6 +14,7 @@ Resource   ${CURDIR}/../../PageObject/locators/HomeScreenLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/CallLogLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/CommanLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/PostCallScreenLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/VoicemailLocators.resource
 
 
 # Class Files
@@ -26,6 +27,7 @@ Resource   ${CURDIR}/../../PageObject/keywords/CallLog_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/CallLog.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Settings_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Settings.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Voicemail.resource
 
 *** Variables ***
 ${TEST_DATA_YAML_FILE}    ${CURDIR}/../../ConfigFiles/testdata.yaml
@@ -74,6 +76,7 @@ Suite Teardown
 
 Test Setup
     Connecting to BLUphone
+    Remove all voicemails
     Remove all call logs
 
 Test Teardown
@@ -90,8 +93,24 @@ Connecting to BLUphone
         Open Application
         ...    ${APPIUM_URL}
         ...    &{DEVICE_AS_DICTIONARY}
+        Navigate To Home Screen
         Wait Until Keyword Succeeds    180    5    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    ${DefaultTimeout}
     Get Driver Instance
+
+Navigate To Home Screen
+    ${on_home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    5
+    Return From Keyword If    ${on_home}
+    FOR    ${attempt}    IN RANGE    1    5
+        Run Keyword And Ignore Error    Wait Until Element Is Visible    ${VM_BACK_BUTTON}    2
+        Run Keyword And Ignore Error    Click Element    ${VM_BACK_BUTTON}
+        Run Keyword And Ignore Error    Wait Until Element Is Visible    ${VM_HOME_BUTTON}    2
+        Run Keyword And Ignore Error    Click Element    ${VM_HOME_BUTTON}
+        Run Keyword And Ignore Error    Wait Until Element Is Visible    ${HOME_BUTTON}    2
+        Run Keyword And Ignore Error    Click Element    ${HOME_BUTTON}
+        ${on_home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    5
+        Exit For Loop If    ${on_home}
+    END
+    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    ${DefaultTimeout}
 
 Load Device Info
     [Arguments]    ${DEVICE_NAME}
@@ -159,3 +178,11 @@ Save SIP Logs To File
 
 Take Screenshot On Failure
     Run Keyword If Test Failed    Capture Page Screenshot    failure.png
+
+the phone is on-hook
+    ${blue_header}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${BLUE_HEADER}    5
+    Run Keyword If    not ${blue_header}    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    ${DefaultTimeout}
+    Log To Console    Verified phone is on-hook on home screen
+
+captions for the call are displayed
+    Compare Captions    duration=120

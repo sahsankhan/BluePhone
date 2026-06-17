@@ -9,8 +9,9 @@ Verify call log badge is visible on Call Log app icon on home screen
     Log    Verified call log badge is visible on Call Log app icon on home screen    console=True
 
 Tap on Call Log App
-    Wait Until Element Is Visible    ${CALL_LOG_ICON}    ${DefaultTimeout}
-    Click Element    ${CALL_LOG_ICON}
+    Navigate To Home Screen
+    Wait Until Element Is Visible    ${HOME_CALL_LOG_TILE}    ${DefaultTimeout}
+    Click Element    ${HOME_CALL_LOG_TILE}
     Log    User tapped on Call Log app icon    console=True
 
 Verify Recent Missed Call Record Is Present
@@ -49,8 +50,9 @@ Verify missed call details screen displays
     Log To Console    Verified missed call details screen is displayed with contact name, avatar, callback button, time and date of missed call, and close/back button
 
 Remove all call logs
-    Wait Until Element Is Visible    ${CALL_LOG_ICON}    ${DefaultTimeout}
-    Click Element                    ${CALL_LOG_ICON}
+    Navigate To Home Screen
+    Wait Until Element Is Visible    ${HOME_CALL_LOG_TILE}    ${DefaultTimeout}
+    Click Element                    ${HOME_CALL_LOG_TILE}
     Sleep    1s
 
     ${empty_by_id}=      Run Keyword And Return Status    Element Should Be Visible    ${NO_MISSED_CALLS}

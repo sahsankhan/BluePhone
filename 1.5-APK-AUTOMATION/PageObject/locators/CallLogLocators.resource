@@ -158,8 +158,10 @@ ${CALL_DETAILS}                 xpath=//android.widget.ListView[@resource-id="cl
 ${FIRST_CALL_NUMBER_CALL_LIST}  xpath=(//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewDisplay"])[1]
 ${SECOND_CALL_NUMBER_CALL_LIST}  xpath=(//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewDisplay"])[2]
 
-${CALLLOG_BADGE_COUNTER}        xpath=//android.widget.RelativeLayout[@resource-id="clrcap.CCClient:id/btnCallLogs"]/android.view.ViewGroup/android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewCount"]
+${HOME_CALL_LOG_TILE}             id=clrcap.CCClient:id/btnCallLogs
+${CALLLOG_BADGE_COUNTER}        xpath=//android.widget.RelativeLayout[@resource-id="clrcap.CCClient:id/btnCallLogs"]//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewCount"]
 ${CALLLOG_BADGE}                xpath=(//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewCount"])[1]
+${CALL_LOG_BADGE}               xpath=(//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewCount"])[1]
 # 3-way call locators
 ${MERGED_CALL_HOME_BUTTON}      xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btnMenuLayout"]
 ${MERGED_CALL_TONE_BUTTON}      xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btn_tone"]
