@@ -55,3 +55,13 @@ Initiate Primary Inbound Call
 call gets ended
     Verify call log badge is visible on Call Log app icon on home screen
     Sleep    5s    Adding sleep to ensure call log badge is updated before proceeding
+
+conversation captions are displayed
+    Compare Captions    duration=120
+
+the user ends the call
+    Sleep    5s    Allow call to stabilize before ending
+    Press Speaker Button    udid=${UDID}
+
+the selected phone number is dialed
+    Get Post Call Contact Name

@@ -15,6 +15,7 @@ Resource   ${CURDIR}/../../PageObject/locators/CallLogLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/CommanLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/PostCallScreenLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/VoicemailLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/ContactsLocators.resource
 
 
 # Class Files
@@ -28,6 +29,7 @@ Resource   ${CURDIR}/../../PageObject/keywords/CallLog.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Settings_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Settings.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Voicemail.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Contacts.resource
 
 *** Variables ***
 ${TEST_DATA_YAML_FILE}    ${CURDIR}/../../ConfigFiles/testdata.yaml
@@ -83,6 +85,7 @@ Test Teardown
     Take Screenshot On Failure
     Run Keyword If Test Failed    Capture Page Screenshot    failure.png
     Run Keyword And Ignore Error    Derive SIP Logs
+    Run Keyword And Ignore Error    Delete The Created Contact
     Remove Primary Container    type=IB
     Remove Secondary Container    type=IB
     Remove Primary Container    type=OB
@@ -186,3 +189,10 @@ the phone is on-hook
 
 captions for the call are displayed
     Compare Captions    duration=120
+
+Get Post Call Contact Name
+    ${expected_name}=    Get Value From Yaml File    user    verificationName2
+    Wait Until Element Is Visible    ${POST_CALL_CONTACT_NAME}    30
+    ${actual_name}=    Get Text    ${POST_CALL_CONTACT_NAME}
+    Log    Post-call contact name: ${actual_name}    console=True
+    Should Be Equal    ${actual_name}    ${expected_name}
