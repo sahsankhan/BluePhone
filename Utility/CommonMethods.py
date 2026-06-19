@@ -644,3 +644,56 @@ class CommonMethods:
             )
  
         logger.info("[INFO] Caption comparison passed successfully", console=True)
+
+    def _adb_shell(self, *args: str, udid: str = "") -> subprocess.CompletedProcess:
+        command = ["adb"]
+        if udid:
+            command += ["-s", udid]
+        command += ["shell", *args]
+        return subprocess.run(command, capture_output=True, text=True)
+
+    @keyword
+    def get_device_brightness(self, udid: str = "") -> str:
+        try:
+            result = self._adb_shell(
+                "cat",
+                "/sys/class/backlight/panel0-backlight/brightness",
+                udid=udid,
+            )
+            if result.returncode != 0:
+                raise Exception(result.stderr.strip() or "ADB command failed")
+            brightness = result.stdout.strip()
+            logger.info(f"Device current brightness value: {brightness}")
+            return brightness
+        except Exception as e:
+            raise Exception(f"Failed to get device brightness: {e}") from e
+
+    @keyword
+    def verify_device_display_state(self, expected_state: str = "ON", udid: str = "") -> str:
+        try:
+            result = self._adb_shell(
+                "cat",
+                "/sys/class/backlight/panel0-backlight/brightness",
+                udid=udid,
+            )
+            if result.returncode != 0:
+                raise Exception(result.stderr.strip() or "ADB command failed")
+            brightness = result.stdout.strip()
+            actual_state = "OFF" if int(brightness) == 1 else "ON"
+            logger.info(
+                f"Display brightness={brightness}, actual={actual_state}, expected={expected_state}"
+            )
+            report_dir = BuiltIn().get_variable_value("${REPORT_DIR}")
+            BuiltIn().run_keyword(
+                "Capture Page Screenshot",
+                f"{report_dir}/display_state_{int(time.time())}.png",
+            )
+            if actual_state != expected_state.upper():
+                raise AssertionError(
+                    f"Display state mismatch. Expected: {expected_state.upper()} | Actual: {actual_state}"
+                )
+            return actual_state
+        except AssertionError:
+            raise
+        except Exception as e:
+            raise Exception(f"Failed to verify device display state: {e}") from e

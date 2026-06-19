@@ -1,9 +1,10 @@
 *** Settings ***
 Resource    ../../PageObject/keywords/CommonKeywords.resource
+Resource    ../../PageObject/keywords/TestLifecycle.resource
 Suite Setup    Suite Setup
 Suite Teardown    Suite Teardown
-Test Setup    Test Setup
-Test Teardown    Test Teardown    
+Test Setup    TMCC 11193 Test Setup
+Test Teardown    TMCC 11193 Test Teardown
 
 *** Test Cases ***
 

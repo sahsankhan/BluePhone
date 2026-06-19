@@ -14,3 +14,7 @@ ${CONTACT_DELETE_YES_BTN}       xpath=//android.widget.Button[@resource-id="clrc
 ${CONTACT_HOME_BTN}             id=clrcap.CCClient:id/btn_menu
 ${CONTACT_NAME_IN_LIST}         id=clrcap.CCClient:id/textViewFullname
 ${POST_CALL_CONTACT_NAME}       id=clrcap.CCClient:id/tv_name
+${CONTACT_SUPPORT_ENTRY}        xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname' and @text='ClearCaptions']
+${CONTACT_HEART_ON_AVATAR}      id=clrcap.CCClient:id/iv_contact_favorite
+${CONTACT_DETAIL_FULL_NAME}     id=clrcap.CCClient:id/tv_full_name
+${CONTACT_TOOLBAR_BACK}         id=clrcap.CCClient:id/ib_toolbar_back

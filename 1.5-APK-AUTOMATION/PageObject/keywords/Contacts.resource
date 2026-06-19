@@ -101,3 +101,29 @@ Delete The Created Contact
     Return From Keyword If    not ${on_list}
     Delete Test Contact If Present
     Navigate To Home Screen
+
+Verify Contacts List Is Displayed
+    Wait Until Element Is Visible    ${CONTACT_LIST_TITLE}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_SUPPORT_ENTRY}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_SUPPORT_ENTRY}
+    Log To Console    Contacts list displayed with ClearCaptions entry
+
+Add Contact And Mark Favorite From Favorites Flow
+    ${contact_first}=    Get Value From Yaml File    user    createContactFirstName
+    ${contact_last}=     Get Value From Yaml File    user    createContactLastName
+    Add New Contact    ${contact_first}    ${contact_last}    ${DID_1}
+    Navigate To Home Screen
+    Wait Until Element Is Visible    ${FAVORITES_APP}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_APP}
+    Wait Until Element Is Visible    ${FAVORITES_ADD_BUTTON}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_ADD_BUTTON}
+    ${contact_name}=    Get Value From Yaml File    user    verificationName2
+    Wait Until Element Is Visible    ${FAVORITES_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_SEARCH_BAR}
+    Input Text    ${FAVORITES_SEARCH_BAR}    ${contact_name}
+    Wait Until Element Is Visible    ${FAVORITES_CONTACT_ROW}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_CONTACT_ROW}
+    Wait Until Element Is Visible    ${FAVORITES_HEART_BUTTON}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_HEART_BUTTON}
+    Wait Until Element Is Visible    ${FAVORITES_ADD_CONTACT_BTN}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_ADD_CONTACT_BTN}

@@ -16,6 +16,8 @@ Resource   ${CURDIR}/../../PageObject/locators/CommanLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/PostCallScreenLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/VoicemailLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/ContactsLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/FavoritesLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/HelpVideosLocators.resource
 
 
 # Class Files
@@ -30,6 +32,12 @@ Resource   ${CURDIR}/../../PageObject/keywords/Settings_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Settings.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Voicemail.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Contacts.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Contacts_Steps.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Favorites.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Favorites_Steps.resource
+Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos.resource
+Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos_Steps.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Display_Steps.resource
 
 *** Variables ***
 ${TEST_DATA_YAML_FILE}    ${CURDIR}/../../ConfigFiles/testdata.yaml
@@ -75,21 +83,6 @@ Suite Setup
 
 Suite Teardown
     Log    Ending Test Suite: ${SUITE_NAME}
-
-Test Setup
-    Connecting to BLUphone
-    Remove all voicemails
-    Remove all call logs
-
-Test Teardown
-    Take Screenshot On Failure
-    Run Keyword If Test Failed    Capture Page Screenshot    failure.png
-    Run Keyword And Ignore Error    Derive SIP Logs
-    Run Keyword And Ignore Error    Delete The Created Contact
-    Remove Primary Container    type=IB
-    Remove Secondary Container    type=IB
-    Remove Primary Container    type=OB
-    Remove Secondary Container    type=OB
 
 Connecting to BLUphone
     Run Keywords
