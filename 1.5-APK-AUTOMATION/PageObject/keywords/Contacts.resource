@@ -38,11 +38,11 @@ Delete Test Contact If Present
     Sleep    2s
     ${contact_present}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    5
     IF    not ${contact_present}
-        Log To Console    No existing test contact found — proceeding to create new one
+        Log To Console    No leftover test contact found — ready to create new one
         Clear Contacts Search Field
         Return From Keyword
     END
-    Log To Console    Found existing test contact — deleting before create
+    Log To Console    Removing leftover test contact before create
     Click Element    ${CONTACT_NAME_IN_LIST}
     Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    ${DefaultTimeout}
     Click Element    ${CONTACT_EDIT_BTN}
@@ -109,6 +109,7 @@ Verify Contacts List Is Displayed
     Log To Console    Contacts list displayed with ClearCaptions entry
 
 Add Contact And Mark Favorite From Favorites Flow
+    [Documentation]    TMCC-3021 — create test contact once, add to favorites via grey heart. Does not delete contact.
     ${contact_first}=    Get Value From Yaml File    user    createContactFirstName
     ${contact_last}=     Get Value From Yaml File    user    createContactLastName
     Add New Contact    ${contact_first}    ${contact_last}    ${DID_1}
@@ -127,3 +128,16 @@ Add Contact And Mark Favorite From Favorites Flow
     Click Element    ${FAVORITES_HEART_BUTTON}
     Wait Until Element Is Visible    ${FAVORITES_ADD_CONTACT_BTN}    ${DefaultTimeout}
     Click Element    ${FAVORITES_ADD_CONTACT_BTN}
+    Log To Console    Contact added to favorites from Favorites add screen
+
+Open Test Contact Detail From Contacts List
+    [Documentation]    Opens Contacts, searches test contact, taps into detail — no delete.
+    Open Contacts List Screen
+    ${contact_name}=    Get Value From Yaml File    user    verificationName2
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${contact_name}
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Click Element    ${CONTACT_NAME_IN_LIST}
+    Wait Until Element Is Visible    ${CONTACT_SAVED_PHONE_NUMBER}    ${DefaultTimeout}
+    Log To Console    Opened contact detail for ${contact_name}

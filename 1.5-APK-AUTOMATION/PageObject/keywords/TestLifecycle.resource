@@ -65,6 +65,7 @@ TMCC 3021 Test Setup
 
 TMCC 3021 Test Teardown
     Capture Failure Artifacts
+    Log To Console    Teardown: removing test contact created for TMCC-3021
     Run Keyword And Ignore Error    Delete The Created Contact
 
 # --- TMCC-11462: Empty Favorites text (test clears favorites in scenario) ---
