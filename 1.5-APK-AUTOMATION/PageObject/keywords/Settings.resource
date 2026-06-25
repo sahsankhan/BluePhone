@@ -40,8 +40,8 @@ Verify Reset Phone screen is still visible
 
 Open Settings From Home
     Navigate To Home Screen
-    Wait Until Element Is Visible    ${SETTINGS_APP_TEXT}    ${DefaultTimeout}
-    Click Element    ${SETTINGS_APP_TEXT}
+    Wait Until Element Is Visible    ${SETTINGS_APP}    ${DefaultTimeout}
+    Click Element    ${SETTINGS_APP}
     Log To Console    Settings app opened
 
 Change Sleep Timeout To ${minutes} Minutes
@@ -76,13 +76,7 @@ Verify Brightness Restored To Saved Value
     Should Be Equal As Integers    ${current}    ${SAVED_BRIGHTNESS}
 
 Verify Hidden Menu Is Not In Settings
-    Open Settings From Home
-    ${found}=    Set Variable    ${False}
-    FOR    ${attempt}    IN RANGE    6
-        ${found}=    Run Keyword And Return Status
-        ...    Wait Until Element Is Visible    ${SETTINGS_HIDDEN_MENU}    2
-        Exit For Loop If    ${found}
-        Scroll Screen Up    max_scrolls=1    delay=1
-    END
+    ${found}=    Run Keyword And Return Status
+    ...    Scroll Element Into View    locator=${SETTINGS_HIDDEN_MENU}    max_swipes=5    direction=down
     Should Be Equal    ${found}    ${False}    msg=Hidden Menu is displayed when it should not be
     Tap Settings Home Button

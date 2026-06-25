@@ -21,9 +21,7 @@ clicks on the Save button
     Tap Favorites Save Button
 
 taps on the remove button for all contacts and clicks on the Save button
-    Tap Favorites Edit Button
-    Remove All Favorites On Edit Screen
-    Tap Favorites Save Button
+    Clear All Favorites On Favorites Screen
 
 Add Favorites text should be present in the center of the screen
     Verify Add Favorites Empty Text Is Displayed

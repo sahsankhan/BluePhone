@@ -9,17 +9,39 @@ Open Favorites App
     Log To Console    Favorites app opened
 
 Ensure ClearCaptions Favorite Exists
-    Open Contacts List Screen
-    ${has_heart}=    Run Keyword And Return Status
-    ...    Wait Until Element Is Visible    ${CONTACT_SUPPORT_ENTRY}    5
-    IF    not ${has_heart}
-        Click Element    ${CONTACT_SUPPORT_ENTRY}
-        ${grey_heart}=    Run Keyword And Return Status
-        ...    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    5
-        Run Keyword If    ${grey_heart}    Click Element    ${CONTACT_HEART_ON_AVATAR}
-        Run Keyword And Ignore Error    Click Element    ${YES_BTN}
-    END
+    Open Favorites App
+    ${support_name}=    Get Value From Yaml File    user    verificationSupportName
+    ${already_in_favorites}=    Run Keyword And Return Status
+    ...    Verify Contact Appears In Favorites List    ${support_name}
+    Run Keyword If    ${already_in_favorites}    Navigate To Home Screen
+    Return From Keyword If    ${already_in_favorites}
+    Add ClearCaptions To Favorites From Favorites Add Screen
+
+Add ClearCaptions To Favorites From Favorites Add Screen
+    Wait Until Element Is Visible    ${FAVORITES_ADD_BUTTON}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_ADD_BUTTON}
+    ${contact_name}=    Get Value From Yaml File    user    verificationSupportName
+    Wait Until Element Is Visible    ${FAVORITES_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_SEARCH_BAR}
+    Input Text    ${FAVORITES_SEARCH_BAR}    ${contact_name}
+    Wait Until Element Is Visible    ${FAVORITES_CONTACT_ROW}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_CONTACT_ROW}
+    Wait Until Element Is Visible    ${FAVORITES_HEART_BUTTON}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_HEART_BUTTON}
+    Wait Until Element Is Visible    ${FAVORITES_ADD_CONTACT_BTN}    ${DefaultTimeout}
+    Click Element    ${FAVORITES_ADD_CONTACT_BTN}
     Navigate To Home Screen
+    Log To Console    ClearCaptions contact added to favorites
+
+Clear All Favorites On Favorites Screen
+    Open Favorites App
+    ${already_empty}=    Run Keyword And Return Status
+    ...    Wait Until Element Is Visible    ${FAVORITES_EMPTY_TEXT}    5
+    Return From Keyword If    ${already_empty}
+    Tap Favorites Edit Button
+    Remove All Favorites On Edit Screen
+    Tap Favorites Save Button
+    Log To Console    All favorites removed from Favorites screen
 
 Tap Favorites Edit Button
     Wait Until Element Is Visible    ${FAVORITES_EDIT_BTN}    ${DefaultTimeout}
