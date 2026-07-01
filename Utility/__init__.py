@@ -8,7 +8,9 @@ from .Voip import Voip
 class Utility(CommonMethods, Voip):
 
     def __init__(self):
-        self._mob: MobAppTestLibrary = None
+        CommonMethods.__init__(self)
+        Voip.__init__(self)
+        self._mob = None
 
     @property
     def mob(self) -> MobAppTestLibrary:

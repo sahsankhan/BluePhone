@@ -653,16 +653,36 @@ class CommonMethods:
         return subprocess.run(command, capture_output=True, text=True)
 
     @keyword
+    def wake_device_screen(self, udid: str = "") -> None:
+        for keycode in ("224", "26"):
+            result = self._adb_shell("input", "keyevent", keycode, udid=udid)
+            if result.returncode == 0:
+                logger.info(f"Sent wake keyevent {keycode} to device")
+                time.sleep(1)
+                return
+        raise Exception("Failed to wake device screen via ADB")
+
+    def _read_device_brightness(self, udid: str = "") -> str:
+        backlight_paths = [
+            "/sys/class/backlight/panel0-backlight/brightness",
+            "/sys/class/backlight/pwm-backlight.0/brightness",
+        ]
+        errors = []
+        for path in backlight_paths:
+            result = self._adb_shell("cat", path, udid=udid)
+            if result.returncode != 0:
+                errors.append(result.stderr.strip() or path)
+                continue
+            brightness = result.stdout.strip()
+            if brightness.isdigit():
+                return brightness
+            errors.append(f"{path}: non-numeric value '{brightness}'")
+        raise Exception("; ".join(errors) or "No backlight brightness path found")
+
+    @keyword
     def get_device_brightness(self, udid: str = "") -> str:
         try:
-            result = self._adb_shell(
-                "cat",
-                "/sys/class/backlight/panel0-backlight/brightness",
-                udid=udid,
-            )
-            if result.returncode != 0:
-                raise Exception(result.stderr.strip() or "ADB command failed")
-            brightness = result.stdout.strip()
+            brightness = self._read_device_brightness(udid=udid)
             logger.info(f"Device current brightness value: {brightness}")
             return brightness
         except Exception as e:
@@ -671,15 +691,8 @@ class CommonMethods:
     @keyword
     def verify_device_display_state(self, expected_state: str = "ON", udid: str = "") -> str:
         try:
-            result = self._adb_shell(
-                "cat",
-                "/sys/class/backlight/panel0-backlight/brightness",
-                udid=udid,
-            )
-            if result.returncode != 0:
-                raise Exception(result.stderr.strip() or "ADB command failed")
-            brightness = result.stdout.strip()
-            actual_state = "OFF" if int(brightness) == 1 else "ON"
+            brightness = self._read_device_brightness(udid=udid)
+            actual_state = "OFF" if int(brightness) <= 1 else "ON"
             logger.info(
                 f"Display brightness={brightness}, actual={actual_state}, expected={expected_state}"
             )

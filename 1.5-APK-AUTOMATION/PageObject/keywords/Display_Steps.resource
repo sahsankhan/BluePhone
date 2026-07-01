@@ -9,6 +9,7 @@ the Hidden Menu should not be displayed in the Settings options
     Verify Hidden Menu Is Not In Settings
 
 screen sleep time is set to 1 minute
+    Log To Console    TMCC sleep test: temporarily setting sleep timeout to 1 Minute
     Change Sleep Timeout To 1 Minutes
 
 Screen should sleep after 1 minute

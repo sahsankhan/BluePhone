@@ -96,6 +96,8 @@ Connecting to BLUphone
 Navigate To Home Screen
     ${on_home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACTS_APP_ICON}    5
     Return From Keyword If    ${on_home}
+    Run Keyword And Ignore Error    Wake Device Screen    udid=${UDID}
+    Sleep    1s
     FOR    ${attempt}    IN RANGE    1    5
         Run Keyword And Ignore Error    Wait Until Element Is Visible    ${VM_BACK_BUTTON}    2
         Run Keyword And Ignore Error    Click Element    ${VM_BACK_BUTTON}
@@ -173,7 +175,7 @@ Save SIP Logs To File
     Log    SIP logs saved to: ${file_path}
 
 Take Screenshot On Failure
-    Run Keyword If Test Failed    Capture Page Screenshot    failure.png
+    Run Keyword If Test Failed    Capture Page Screenshot    ${REPORT_DIR}/${TEST_NAME}_failure.png
 
 the phone is on-hook
     ${blue_header}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${BLUE_HEADER}    5

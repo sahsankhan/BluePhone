@@ -44,24 +44,38 @@ Open Settings From Home
     Click Element    ${SETTINGS_APP}
     Log To Console    Settings app opened
 
+Wake Device Screen If Needed
+    Run Keyword And Ignore Error    Wake Device Screen    udid=${UDID}
+    Sleep    1s
+
+Restore Default Sleep Timeout
+    Wake Device Screen If Needed
+    Change Sleep Timeout To 5 Minutes
+    Log To Console    Sleep timeout restored to default 5 Minutes
+
 Change Sleep Timeout To ${minutes} Minutes
+    Wake Device Screen If Needed
     Open Settings From Home
     Wait Until Element Is Visible    ${SETTINGS_DISPLAY}    ${DefaultTimeout}
     Click Element    ${SETTINGS_DISPLAY}
-    Wait Until Element Is Visible    ${SETTINGS_SLEEP_TIMEOUT}    ${DefaultTimeout}
-    Click Element    ${SETTINGS_SLEEP_TIMEOUT}
-    ${locator}=    Get Sleep Timeout Locator    ${minutes}
-    Wait Until Element Is Visible    ${locator}    ${DefaultTimeout}
-    Click Element    ${locator}
+    Adjust Sleep Timeout    ${minutes}
     Tap Settings Home Button
 
-Get Sleep Timeout Locator
+Adjust Sleep Timeout
     [Arguments]    ${minutes}
-    ${locator}=    Set Variable If
-    ...    '${minutes}' == '1'     ${SETTINGS_SLEEP_1_MIN}
-    ...    '${minutes}' == '20'    ${SETTINGS_SLEEP_20_MIN}
-    Should Not Be Empty    ${locator}    Invalid sleep timeout '${minutes}'. Allowed: 1, 20
-    RETURN    ${locator}
+    ${target}=    Set Variable If    '${minutes}' == '1'    1 Minute    ${minutes} Minutes
+    Wait Until Element Is Visible    ${SETTINGS_SLEEP_TIMEOUT}    ${DefaultTimeout}
+    FOR    ${i}    IN RANGE    15
+        ${current}=    Get Text    ${SETTINGS_SLEEP_TIMEOUT_VALUE}
+        Exit For Loop If    '${current}' == '${target}'
+        ${current_min}=    Evaluate    int('${current}'.split()[0])
+        ${target_min}=    Evaluate    int('${minutes}')
+        Run Keyword If    ${target_min} > ${current_min}    Click Element    ${SETTINGS_SLEEP_TIMEOUT_UP}
+        Run Keyword If    ${target_min} < ${current_min}    Click Element    ${SETTINGS_SLEEP_TIMEOUT_DOWN}
+        Sleep    0.5s
+    END
+    ${final}=    Get Text    ${SETTINGS_SLEEP_TIMEOUT_VALUE}
+    Should Be Equal As Strings    ${final}    ${target}
 
 Tap Settings Home Button
     Wait Until Element Is Visible    ${SETTINGS_HOME_BTN}    ${DefaultTimeout}

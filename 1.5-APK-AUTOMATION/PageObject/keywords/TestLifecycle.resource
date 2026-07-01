@@ -6,7 +6,7 @@ Resource   ${CURDIR}/../../PageObject/keywords/CommonKeywords.resource
 
 Capture Failure Artifacts
     Take Screenshot On Failure
-    Run Keyword If Test Failed    Capture Page Screenshot    failure.png
+    Run Keyword If Test Failed    Capture Page Screenshot    ${REPORT_DIR}/${TEST_NAME}_failure.png
 
 Capture Failure Artifacts With SIP Logs
     Capture Failure Artifacts
@@ -96,19 +96,17 @@ TMCC 11449 Test Teardown
 
 TMCC 11453 Test Setup
     Connecting to BLUphone
-    Change Sleep Timeout To 20 Minutes
 
 TMCC 11453 Test Teardown
+    Run Keyword And Ignore Error    Restore Default Sleep Timeout
     Capture Failure Artifacts
-    Run Keyword And Ignore Error    Change Sleep Timeout To 20 Minutes
 
 TMCC 4467 Test Setup
     Connecting to BLUphone
-    Change Sleep Timeout To 20 Minutes
 
 TMCC 4467 Test Teardown
+    Run Keyword And Ignore Error    Restore Default Sleep Timeout
     Capture Failure Artifacts
-    Run Keyword And Ignore Error    Change Sleep Timeout To 20 Minutes
 
 # --- TMCC-11239: Inbound answered call — call log validation ---
 

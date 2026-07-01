@@ -14,7 +14,8 @@ ${PHONE}                   xpath=//android.widget.TextView[@resource-id="clrcap.
 ${SETTINGS_APP_TEXT}       xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/textViewCustom" and @text="Settings"]
 ${SETTINGS_DISPLAY}        xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/text_view_standart" and @text="Display"]
 ${SETTINGS_HIDDEN_MENU}    xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/text_view_standart" and @text="Hidden menu"]
-${SETTINGS_SLEEP_TIMEOUT}  xpath=//android.view.ViewGroup[@resource-id="clrcap.CCClient:id/scv_sleep_timeout"]//android.widget.TextView[@resource-id="clrcap.CCClient:id/tvValue"]
-${SETTINGS_SLEEP_1_MIN}    xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="1 Minute"]
-${SETTINGS_SLEEP_20_MIN}   xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="20 Minutes"]
+${SETTINGS_SLEEP_TIMEOUT}        id=clrcap.CCClient:id/scv_sleep_timeout
+${SETTINGS_SLEEP_TIMEOUT_VALUE}  id=clrcap.CCClient:id/tvValue
+${SETTINGS_SLEEP_TIMEOUT_UP}     id=clrcap.CCClient:id/ivUp
+${SETTINGS_SLEEP_TIMEOUT_DOWN}   id=clrcap.CCClient:id/ivDown
 ${SETTINGS_HOME_BTN}       id=clrcap.CCClient:id/btn_menu

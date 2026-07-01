@@ -2,16 +2,19 @@ from robot.api.deco import library
 from ZmxApiLibrary import ZmxApiLibrary
 from .RequestsKeywordTestLibrary import *
 from .SessionKeywordsTestLibrary import *
+from .ValidationKeywordsTestLibrary import *
 
 @library(scope='SUITE')
 class ApiTestLibrary(
     SessionKeywordsTestLibrary,
-    RequestsKeywordTestLibrary
+    RequestsKeywordTestLibrary,
+    ValidationKeywordsTestLibrary
 ):
     def __init__(self):
         self.api_instance = ZmxApiLibrary()
         RequestsKeywordTestLibrary.__init__(self, self.api_instance)
         SessionKeywordsTestLibrary.__init__(self, self.api_instance)
+        ValidationKeywordsTestLibrary.__init__(self, self.api_instance)
     
     # Expose ZmxApiTestLibrary methods directly
     def __getattr__(self, name):
