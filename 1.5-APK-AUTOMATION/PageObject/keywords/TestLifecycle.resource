@@ -149,3 +149,22 @@ TMCC 11136 Test Teardown
     Capture Failure Artifacts With SIP Logs
     Cleanup VoIP Call Session
     Run Keyword And Ignore Error    Delete The Created Contact
+
+# --- Scenario_1: Full E2E (11547 + 11490 + 11496 + 11461) ---
+
+Scenario 1 E2E Test Setup
+    Connecting to BLUphone
+    Remove all call logs
+    Remove all voicemails
+
+Scenario 1 E2E Test Teardown
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session
+
+# --- Scenario_1: partial non-call run (optional) ---
+
+Scenario 1 Non Call Test Setup
+    Connecting to BLUphone
+
+Scenario 1 Non Call Test Teardown
+    Capture Failure Artifacts

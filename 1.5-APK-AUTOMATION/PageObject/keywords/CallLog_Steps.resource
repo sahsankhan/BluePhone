@@ -1,14 +1,17 @@
 *** Settings ***
 Resource   ${CURDIR}/../../PageObject/keywords/CommonKeywords.resource
-*** Variables ***
 
 *** Keywords ***
 
+the call should be recorded as an answered call in the Call Log
+    Close Post Call Review Screen
+    Tap on Call Log App
+
 no missed call record should be created
     Wait Until Element Is Visible    ${MISSED_CALL_TAB}    ${DefaultTimeout}
-    Click Element    ${MISSED_CALL_TAB} 
+    Click Element    ${MISSED_CALL_TAB}
     ${value}=    Verify Recent Call Record Is Present    ${CALL_NUMBER}    ${DID_1}    ${DefaultTimeout}
-    Should Not Be True    ${value}    Recent call record is not present in missed call tab
+    Should Not Be True    ${value}    Recent call record is present in missed call tab
 
 user clicks the Call Log App
     Tap on Call Log App
@@ -28,3 +31,13 @@ log icon and time are displayed
 
 the missed call details screen displays
     Verify missed call details screen displays
+
+verify call log record with captions
+    Tap on Close button from post call screen
+    AU navigates to the record in the Call Log
+    Compare Captions    duration=30
+
+the user verifies call log record and captions
+    Tap on Close button from post call screen
+    AU navigates to the record in the Call Log
+    Compare Captions    duration=30

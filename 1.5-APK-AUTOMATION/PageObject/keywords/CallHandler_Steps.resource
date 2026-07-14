@@ -1,6 +1,5 @@
 *** Settings ***
 Resource   ${CURDIR}/../../PageObject/keywords/CommonKeywords.resource
-*** Variables ***
 
 *** Keywords ***
 
@@ -9,6 +8,31 @@ an inbound call is placed to the Assisted User
 
 the Assisted User answers the call
     Press Speaker Button    udid=${UDID}
-    Sleep    5s    Adding sleep to ensure call is fully connected before proceeding
+    Sleep    5s    Allow call to connect before proceeding
     Remove Primary Container    type=OB
 
+the user makes an outbound call
+    Generate outbound calls by dialling number and without caption comparison
+
+the captions should be displayed
+    Compare Captions    duration=60
+
+the user receives an inbound call and presses the speaker button
+    the AU is on an active call
+
+the call should connect successfully
+    Verify Call Duration Is Displayed In Header while on Active Call
+
+captions should be displayed during the call
+    Compare Captions    duration=60
+
+post-call screen appears with captions
+    Wait Until Element Is Visible    ${CLOSE_BTN}    ${DefaultTimeout}
+    Compare Captions    duration=30
+
+the user verifies post-call screen with captions
+    Wait Until Element Is Visible    ${CLOSE_BTN}    ${DefaultTimeout}
+    Compare Captions    duration=30
+
+the AU redirect to home screen
+    Navigate To Home Screen

@@ -65,10 +65,18 @@ taps on the contact information or phone number
 an overlay screen is displayed with the Call Now button option
     Wait Until Element Is Visible    ${CALL_NOW_BTN}    ${DefaultTimeout}
 
-the AU taps the Call Now button on the overlay screen
-    Click Element    ${CALL_NOW_BTN}
-    Sleep    5s    Allow outbound call to connect
-    Press Speaker Button    udid=${UDID}
+the AU taps on the Voicemail icon
+    Open Voicemail App From Home
+    Wait until loading spinner gets disappears from the VM list screen
+
+the AU selects a message from the list
+    Wait Until Element Is Visible    ${FIRST_RECENT_VOICEMAIL}    ${DefaultTimeout}
+    Click Element    ${FIRST_RECENT_VOICEMAIL}
+
+taps on the Play button
+    Wait Until Element Is Visible    ${VM_PLAY_BTN_CENTER}    ${DefaultTimeout}
+    Click Element    ${VM_PLAY_BTN_CENTER}
+    Log To Console    Tapped voicemail play button
 
 Remove all voicemails
     [Documentation]    Deletes all voicemails if present, waits for delete to finish, verifies inbox empty, then returns Home.
@@ -89,6 +97,11 @@ Remove all voicemails
         Voicemail Inbox Should Be Empty
     END
     Navigate To Home Screen
+
+the AU taps the Call Now button on the overlay screen
+    Click Element    ${CALL_NOW_BTN}
+    Sleep    5s    Allow outbound call to connect
+    Press Speaker Button    udid=${UDID}
 
 Delete all voicemails from list screen
     ${edit_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${VM_EDIT_BUTTON}    3

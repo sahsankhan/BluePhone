@@ -65,3 +65,68 @@ the user ends the call
 
 the selected phone number is dialed
     Get Post Call Contact Name
+
+Verify Call Duration Is Displayed In Header while on Active Call
+    Wait Until Element Is Visible    ${CALL_DURATION}    20
+    Log To Console    Call duration is visible in active call header
+
+Convert Duration To Seconds
+    [Arguments]    ${duration_text}
+    ${parts}=    Split String    ${duration_text}    :
+    ${length}=    Get Length    ${parts}
+    IF    ${length} == 2
+        ${minutes}=    Convert To Integer    ${parts}[0]
+        ${seconds}=    Convert To Integer    ${parts}[1]
+        ${total}=    Evaluate    ${minutes} * 60 + ${seconds}
+    ELSE IF    ${length} == 3
+        ${hours}=    Convert To Integer    ${parts}[0]
+        ${minutes}=    Convert To Integer    ${parts}[1]
+        ${seconds}=    Convert To Integer    ${parts}[2]
+        ${total}=    Evaluate    ${hours} * 3600 + ${minutes} * 60 + ${seconds}
+    ELSE
+        Fail    Unrecognised duration format: '${duration_text}'
+    END
+    RETURN    ${total}
+
+Generate outbound calls by dialling number and without caption comparison
+    [Arguments]    ${duration}=None
+    FOR    ${attempt}    IN RANGE    1    4
+        Log    Outbound call attempt ${attempt} of 3    console=True
+        TRY
+            Dial Number With Keycodes    ${DID_1}
+            Make Primary Outbound Call    ${duration}
+            Press Speaker Button    udid=${UDID}
+            Verify Call Duration Is Displayed In Header while on Active Call
+            RETURN
+        EXCEPT    AS    ${error}
+            Log    Outbound attempt ${attempt} failed: ${error}    WARN    console=True
+            Run Keyword And Ignore Error    Remove Primary Container    type=IB
+            Run Keyword If    ${attempt} == 3    Fail    Outbound call failed after 3 attempts: ${error}
+        END
+    END
+
+the AU is on an active call
+    [Arguments]    ${duration}=None
+    FOR    ${i}    IN RANGE    3
+        Make Primary Inbound Call    ${duration}
+        ${status}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${IGNORE_BTN}    ${DefaultTimeout}
+        IF    ${status}
+            Press Speaker Button    udid=${UDID}
+            Verify Call Duration Is Displayed In Header while on Active Call
+            RETURN
+        END
+        Remove Primary Container    type=OB
+    END
+    Fail    Inbound call did not reach active call state after 3 attempts
+
+NAU generate the incoming call
+    Make Primary Inbound Call    duration=60
+
+click on the ignore button to send call to voicemail
+    Wait Until Element Is Visible    ${IGNORE_BTN}    ${DefaultTimeout}
+    Click Element    ${IGNORE_BTN}
+    Wait Until Voicemail Badge Appears
+
+Wait Until Voicemail Badge Appears
+    Wait Until Keyword Succeeds    300s    2s    Wait Until Element Is Visible    ${VOICEMAIL_BADGE_COUNTER}    5
+    Log To Console    Voicemail badge displayed after ignore

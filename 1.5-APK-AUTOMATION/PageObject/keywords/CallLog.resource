@@ -79,3 +79,18 @@ Call Log Should Be Empty
     ${empty_by_id}=      Run Keyword And Return Status    Wait Until Element Is Visible    ${NO_MISSED_CALLS}    ${DefaultTimeout}
     ${empty_by_text}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${NO_CALLS_TEXT}    ${DefaultTimeout}
     Run Keyword If    not (${empty_by_id} or ${empty_by_text})    Fail    Call logs were not cleared — empty state not shown after delete
+
+User selects first record in call log
+    Wait Until Element Is Visible    ${ARROW_BUTTON}    ${DefaultTimeout}
+    Click Element    ${ARROW_BUTTON}
+
+Tap on Close button from post call screen
+    Wait Until Page Contains Element    ${CLOSE_BTN}    ${DefaultTimeout}
+    Click Element    ${CLOSE_BTN}
+
+AU navigates to the record in the Call Log
+    Tap on Call Log App
+    User selects first record in call log
+
+the user taps on close button from post call screen
+    Tap on Close button from post call screen

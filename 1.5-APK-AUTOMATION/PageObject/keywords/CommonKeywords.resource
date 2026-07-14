@@ -18,6 +18,8 @@ Resource   ${CURDIR}/../../PageObject/locators/VoicemailLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/ContactsLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/FavoritesLocators.resource
 Resource   ${CURDIR}/../../PageObject/locators/HelpVideosLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/SettingsPageLocators.resource
+Resource   ${CURDIR}/../../PageObject/locators/OnboardingLocators.resource
 
 
 # Class Files
@@ -38,6 +40,7 @@ Resource   ${CURDIR}/../../PageObject/keywords/Favorites_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos.resource
 Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Display_Steps.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Onboarding_Steps.resource
 
 *** Variables ***
 ${TEST_DATA_YAML_FILE}    ${CURDIR}/../../ConfigFiles/testdata.yaml
