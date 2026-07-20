@@ -94,3 +94,81 @@ AU navigates to the record in the Call Log
 
 the user taps on close button from post call screen
     Tap on Close button from post call screen
+
+Get The TimeZone
+    ${t}=    Get Current Date    result_format=%I:%M %p
+    ${t}=    Evaluate    '${t}'.lstrip('0') if '${t}'.startswith('0') else '${t}'
+    RETURN    ${t}
+
+Click on close button on call log details screen
+    Wait Until Element Is Visible    ${CANCEL_BUTTON}    20
+    Click Element    ${CANCEL_BUTTON}
+
+tap on search button in call log
+    Wait Until Page Contains Element    ${SEARCH_BUTTON}    ${DefaultTimeout}
+    Click Element    ${SEARCH_BUTTON}
+
+a search bar should appear at the top of the screen
+    Wait Until Element Is Visible    ${SEARCH_BAR}    ${DefaultTimeout}
+    Element Should Be Visible    ${SEARCH_BAR}
+
+Enter Name in Search Field
+    [Arguments]    ${contact_name}
+    Wait Until Element Is Visible    ${SEARCH_BAR}    ${DefaultTimeout}
+    Input Text    ${SEARCH_BAR}    ${contact_name}
+
+Verify there are missed, inbound, and outbound calls
+    [Documentation]    Verifies call log has at least one Outgoing, Incoming, and Missed record.
+    ${all_records}=    Get WebElements
+    ...    xpath=//android.widget.FrameLayout[@resource-id='clrcap.CCClient:id/lvList']//android.widget.ImageView[@resource-id='clrcap.CCClient:id/ivCallType']
+    ${total_records}=    Evaluate    len($all_records)
+    Should Be True    ${total_records} > 0    msg=No call records found in the call log.
+    ${outgoing_count}=    Set Variable    ${0}
+    ${incoming_count}=    Set Variable    ${0}
+    ${missed_count}=    Set Variable    ${0}
+    FOR    ${record}    IN    @{all_records}
+        ${call_type}=    Evaluate    $record.get_attribute('contentDescription')
+        IF    '${call_type}' == 'OutgoingCall'
+            ${outgoing_count}=    Evaluate    $outgoing_count + 1
+        ELSE IF    '${call_type}' == 'IncomingCall'
+            ${incoming_count}=    Evaluate    $incoming_count + 1
+        ELSE IF    '${call_type}' == 'MissedCallUnread' or '${call_type}' == 'MissedCallRead'
+            ${missed_count}=    Evaluate    $missed_count + 1
+        END
+    END
+    Log    Call Log Summary | Outgoing: ${outgoing_count} | Incoming: ${incoming_count} | Missed: ${missed_count} | Total: ${total_records}    console=True
+    Should Be True    ${outgoing_count} > 0    msg=No Outgoing call records found.
+    Should Be True    ${incoming_count} > 0    msg=No Incoming call records found.
+    Should Be True    ${missed_count} > 0    msg=No Missed call records found.
+
+Call Record Should Include The Correct Call Time
+    [Arguments]    ${locator}    ${index}    ${expected_times}
+    ${expected_time}=    Get From List    ${expected_times}    ${index}
+    ${position}=    Evaluate    ${index} + 1
+    ${text}=    Get Text    xpath=(${locator})[${position}]
+    ${time_part}=    Fetch From Left    ${text}    ${SPACE}|${SPACE}
+    ${expected_time}=    Evaluate    '${expected_time}'.lstrip('0')
+    ${time_part}=    Evaluate    '${time_part}'.lstrip('0')
+    ${within_buffer}=    Evaluate
+    ...    abs((lambda t: t.hour * 60 + t.minute)(__import__('datetime').datetime.strptime('${time_part}', '%I:%M %p')) - (lambda t: t.hour * 60 + t.minute)(__import__('datetime').datetime.strptime('${expected_time}', '%I:%M %p'))) <= 2
+    Should Be True    ${within_buffer}
+    ...    msg=Expected '${expected_time}' but found '${time_part}' at index ${index} (outside 2 min buffer)
+    Log    Verified call time at index ${index}: ${time_part} (expected: ${expected_time})    console=True
+
+Call Record Should Include The Correct Call Duration
+    [Arguments]    ${locator}    ${index}    ${expected_durations}
+    ${expected_duration}=    Get From List    ${expected_durations}    ${index}
+    ${position}=    Evaluate    ${index} + 1
+    ${text}=    Get Text    xpath=(${locator})[${position}]
+    ${raw_duration}=    Fetch From Right    ${text}    ${SPACE}|${SPACE}
+    ${has_minutes}=    Evaluate    bool(re.search(r'\\d+\\s*min', '${raw_duration}'))    re
+    ${minutes}=    Run Keyword If    ${has_minutes}
+    ...    Evaluate    re.search(r'(\\d+)\\s*min', '${raw_duration}').group(1)    re
+    ...    ELSE    Set Variable    0
+    ${seconds}=    Evaluate    re.search(r'(\\d+)\\s*sec', '${raw_duration}').group(1)    re
+    ${minutes}=    Evaluate    str(int('${minutes}')).zfill(2)
+    ${seconds}=    Evaluate    str(int('${seconds}')).zfill(2)
+    ${duration_part}=    Set Variable    ${minutes}:${seconds}
+    Should Be Equal    ${duration_part}    ${expected_duration}
+    ...    msg=Expected '${expected_duration}' but found '${duration_part}' at index ${index}
+    Log    Verified call duration at index ${index}: ${duration_part}    console=True

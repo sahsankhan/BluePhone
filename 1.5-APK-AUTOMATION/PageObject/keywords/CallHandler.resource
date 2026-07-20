@@ -130,3 +130,24 @@ click on the ignore button to send call to voicemail
 Wait Until Voicemail Badge Appears
     Wait Until Keyword Succeeds    300s    2s    Wait Until Element Is Visible    ${VOICEMAIL_BADGE_COUNTER}    5
     Log To Console    Voicemail badge displayed after ignore
+
+AU is on the active call screen
+    the AU is on an active call
+
+the user dials the phone number of a second NAU
+    Dial Number With Keycodes    ${DID_2}
+    Make Secondary Outbound Call
+
+Outbound call until speaker pressed (stop before connect verify)
+    [Documentation]    Runs dial + outbound API + speaker only. Stops before call-duration verify (known DVT crash point).
+    Dial Number With Keycodes    ${DID_1}
+    Make Primary Outbound Call
+    Press Speaker Button    udid=${UDID}
+    Log To Console    Outbound dial + speaker completed — stopped before call-duration verify
+
+Inbound call until speaker pressed (stop before connect verify)
+    [Documentation]    Rings AU and presses speaker only. Stops before call-duration verify (known DVT crash point).
+    Make Primary Inbound Call
+    Wait Until Element Is Visible    ${IGNORE_BTN}    ${DefaultTimeout}
+    Press Speaker Button    udid=${UDID}
+    Log To Console    Inbound ring + speaker completed — stopped before call-duration verify

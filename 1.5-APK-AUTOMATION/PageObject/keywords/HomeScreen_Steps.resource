@@ -12,6 +12,9 @@ the user is on the home screen
 the Blue device is on the Home screen
     the user is on the home screen
 
+the user is taken to the main screen
+    the user is on the home screen
+
 user put the device in sleep mode
     Wait Until Page Contains Element    ${SLEEP_BAR}    ${DefaultTimeout}
     Click Element    ${SLEEP_BAR}

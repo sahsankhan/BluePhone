@@ -168,3 +168,32 @@ Scenario 1 Non Call Test Setup
 
 Scenario 1 Non Call Test Teardown
     Capture Failure Artifacts
+
+# --- Scenario_2: E2E (11546 + 11490 + 11496 + 11461 + 4402 + 4412 + 1743) ---
+
+Scenario 2 E2E Test Setup
+    Connecting to BLUphone
+    Remove all call logs
+    Remove all voicemails
+
+Scenario 2 E2E Test Teardown
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session
+
+# --- Scenario_2 pieces: connect only (no wipe between pieces that share state) ---
+
+Scenario 2 Piece Connect Setup
+    Connecting to BLUphone
+
+Scenario 2 Piece Connect Teardown
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session
+
+# --- Scenario_1 pieces: connect only ---
+
+Scenario 1 Piece Connect Setup
+    Connecting to BLUphone
+
+Scenario 1 Piece Connect Teardown
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session

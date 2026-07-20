@@ -20,3 +20,4 @@ ${VM_DELETE_FIRST_CONFIRM_MSG}    id=clrcap.CCClient:id/tvMessage
 ${NO_MESSAGES}                    id=clrcap.CCClient:id/audioRecordsEmpty
 ${NO_VM_MESSAGES_TEXT}            xpath=//android.widget.TextView[contains(@text,'You have no messages')]
 ${VM_PLAY_BTN_CENTER}             id=clrcap.CCClient:id/center_play
+${VOICEMAIL_COUNT}                xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/count"]

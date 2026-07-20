@@ -78,6 +78,31 @@ taps on the Play button
     Click Element    ${VM_PLAY_BTN_CENTER}
     Log To Console    Tapped voicemail play button
 
+the user navigates to the Voicemail
+    Open Voicemail App From Home
+    Wait until loading spinner gets disappears from the VM list screen
+
+there is at least one message available to display in the Voicemail section
+    ${vm_present}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${FIRST_RECENT_VOICEMAIL}    10
+    IF    not ${vm_present}
+        Navigate To Home Screen
+        Generate a missed call    duration=120
+        Wait Until Keyword Succeeds    300s    5s    Voicemail Badge Should Be Visible
+        Open Voicemail App From Home
+        Wait until loading spinner gets disappears from the VM list screen
+        Wait Until Element Is Visible    ${FIRST_RECENT_VOICEMAIL}    ${DefaultTimeout}
+    END
+    Log To Console    At least one voicemail message is available in the list
+
+the quantity of messages will appear in the upper right-hand corner as indicated in the mock-up attached
+    Wait Until Element Is Visible    ${VOICEMAIL_COUNT}    ${DefaultTimeout}
+    ${count}=    Get Text    ${VOICEMAIL_COUNT}
+    Should Not Be Empty    ${count}    msg=Voicemail quantity badge in upper-right is empty
+    Log    VOICEMAIL count visible in header: ${count}    console=True
+
+Verify VOICEMAIL Count
+    the quantity of messages will appear in the upper right-hand corner as indicated in the mock-up attached
+
 Remove all voicemails
     [Documentation]    Deletes all voicemails if present, waits for delete to finish, verifies inbox empty, then returns Home.
     Navigate To Home Screen
