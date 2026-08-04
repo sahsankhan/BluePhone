@@ -178,7 +178,108 @@ Save SIP Logs To File
     Log    SIP logs saved to: ${file_path}
 
 Take Screenshot On Failure
-    Run Keyword If Test Failed    Capture Page Screenshot    ${REPORT_DIR}/${TEST_NAME}_failure.png
+    ${safe_name}=    Replace String    ${TEST_NAME}    :    -
+    ${safe_name}=    Replace String    ${safe_name}    /    -
+    Run Keyword If Test Failed    Capture Page Screenshot    ${REPORT_DIR}/${safe_name}_failure.png
+    Run Keyword If Test Failed    Snap Screen    FAILURE
+
+Snap Screen
+    [Documentation]    adb screencap + uiautomator texts + classify. Prints to console; images under TestResults/live_snap.
+    [Arguments]    ${label}=screen
+    ${udid}=    Get Device Udid
+    ${repo}=    Normalize Path    ${CURDIR}${/}..${/}..${/}..
+    ${script}=    Set Variable    ${repo}${/}1.5-APK-AUTOMATION${/}TestResults${/}snap_screen.py
+    ${out_dir}=    Set Variable    ${REPORT_DIR}${/}live_snap
+    Create Directory    ${out_dir}
+    ${py}=    Set Variable    ${repo}${/}panacea_env${/}Scripts${/}python.exe
+    ${rc}    ${output}=    Run And Return Rc And Output    "${py}" -u "${script}" ${udid} "${label}" "${out_dir}"
+    Log To Console    ${output}
+    ${class}=    Set Variable    UNKNOWN
+    ${m}=    Get Regexp Matches    ${output}    SCREEN_CLASS=(\\S+)    1
+    ${n}=    Get Length    ${m}
+    IF    ${n} > 0
+        ${class}=    Get From List    ${m}    0
+    END
+    RETURN    ${class}
+
+Onboarding Already Past Consents
+    [Documentation]    True if device is past consent WebViews (DOB/address/home/registration/etc).
+    ${ssn}=    Run Keyword And Return Status    Page Should Contain Element    ${SSN_FIELD}
+    IF    ${ssn}    RETURN    ${True}
+    ${street}=    Run Keyword And Return Status    Page Should Contain Element    ${STREET_ADDRESS}
+    IF    ${street}    RETURN    ${True}
+    ${home}=    Run Keyword And Return Status    Page Should Contain Element    ${CONTACTS_APP_ICON}
+    IF    ${home}    RETURN    ${True}
+    ${accept}=    Run Keyword And Return Status    Page Should Contain Element    ${REGISTRATION_ACCEPT_BUTTON}
+    IF    ${accept}    RETURN    ${True}
+    ${yes}=    Run Keyword And Return Status    Page Should Contain Element    ${SETUP_NEXT_BUTTON}
+    IF    ${yes}    RETURN    ${True}
+    ${addr_hint}=    Run Keyword And Return Status    Page Should Contain Text    correct
+    IF    ${addr_hint}    RETURN    ${True}
+    ${zip}=    Run Keyword And Return Status    Page Should Contain Element    ${ZIP_CODE}
+    IF    ${zip}    RETURN    ${True}
+    RETURN    ${False}
+
+Get Device Udid
+    ${udid}=    Set Variable    ${UDID}
+    IF    '${udid}' == 'None' or '${udid}' == ''
+        ${udid}=    Get From Dictionary    ${DEVICE_AS_DICTIONARY}    udid
+    END
+    RETURN    ${udid}
+
+Dismiss Soft Keyboard
+    [Documentation]    Prefer Hide Keyboard. Never use BACK — BACK leaves DOB / opens Oops / app chooser.
+    ...    Never tap arbitrary screen coords — DOB instructions contain links that open ResolverActivity.
+    Run Keyword And Ignore Error    Hide Keyboard
+    Sleep    0.3s
+
+Dismiss Oops Overlay If Present
+    [Documentation]    OopsVoipWizardErrorActivity — No phone service. Button text is Close (id activity_setup_prompt_button_no).
+    ...    Prefer Close tap; never BACK (leaves DOB / opens chooser).
+    ${udid}=    Get Device Udid
+    FOR    ${i}    IN RANGE    4
+        ${oops_txt}=    Run Keyword And Return Status    Page Should Contain Text    Oops
+        ${oops_act}=    Run Keyword And Return Status    Page Should Contain Text    phone service
+        IF    not ${oops_txt} and not ${oops_act}
+            RETURN
+        END
+        ${closed}=    Run Keyword And Return Status    Click Element    id=clrcap.CCClient:id/activity_setup_prompt_button_no
+        IF    not ${closed}
+            ${closed}=    Run Keyword And Return Status    Click Element    xpath=//*[@text='Close' or @text='CLOSE']
+        END
+        IF    not ${closed}
+            # Close button sits near bottom-center on 600x1024
+            Run    adb -s ${udid} shell input tap 300 920
+            ${closed}=    Set Variable    ${True}
+        END
+        IF    ${closed}
+            Log To Console    Closed Oops
+            Sleep    0.5s
+        END
+    END
+
+Type Into Focused Field Via Adb
+    [Arguments]    ${text}
+    [Documentation]    Clear then type ONCE via host adb (do not also Input Text — double length disables Next).
+    ${udid}=    Get Device Udid
+    FOR    ${i}    IN RANGE    8
+        Run    adb -s ${udid} shell input keyevent 67
+    END
+    Run    adb -s ${udid} shell input text ${text}
+    Sleep    0.25s
+
+Ensure Element Visible Not Covered By Keyboard
+    [Arguments]    ${locator}    ${timeout}=20
+    [Documentation]    If locator not visible, dismiss Oops / soft keyboard and retry.
+    ...    Do NOT press BACK or tap random coords (opens Oops / app chooser on DOB).
+    Dismiss Oops Overlay If Present
+    ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${locator}    2
+    IF    ${visible}
+        RETURN
+    END
+    Dismiss Soft Keyboard
+    Wait Until Keyword Succeeds    ${timeout}    1s    Wait Until Element Is Visible    ${locator}    2
+    Log To Console    Spot: field visible after Hide Keyboard
 
 the phone is on-hook
     ${blue_header}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${BLUE_HEADER}    5

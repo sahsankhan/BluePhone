@@ -6,7 +6,6 @@ Resource   ${CURDIR}/../../PageObject/keywords/CommonKeywords.resource
 
 Capture Failure Artifacts
     Take Screenshot On Failure
-    Run Keyword If Test Failed    Capture Page Screenshot    ${REPORT_DIR}/${TEST_NAME}_failure.png
 
 Capture Failure Artifacts With SIP Logs
     Capture Failure Artifacts
@@ -160,6 +159,17 @@ Scenario 1 E2E Test Setup
 Scenario 1 E2E Test Teardown
     Capture Failure Artifacts With SIP Logs
     Cleanup VoIP Call Session
+
+# --- Scenario_1: TMCC-11547 onboarding only (reset / unprovisioned device) ---
+
+Scenario 1 Onboarding Test Setup
+    [Documentation]    Connect Appium only. Do not require home/Contacts — reset devices may open Welcome/login instead.
+    Open Application    ${APPIUM_URL}    &{DEVICE_AS_DICTIONARY}
+    Get Driver Instance
+    Sleep    3s    Allow splash / welcome / home to settle
+
+Scenario 1 Onboarding Test Teardown
+    Capture Failure Artifacts
 
 # --- Scenario_1: partial non-call run (optional) ---
 

@@ -36,7 +36,7 @@ text_values:
   Zip_Code: "94025"
 
 onboarding:
-  birth_year: "1950"
+  birth_year: "2005"
   ssn_last_four: "1234"
   home: "HOME"
   contacts: "CONTACTS"
