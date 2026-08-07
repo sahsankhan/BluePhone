@@ -295,3 +295,45 @@ Get Post Call Contact Name
     ${actual_name}=    Get Text    ${POST_CALL_CONTACT_NAME}
     Log    Post-call contact name: ${actual_name}    console=True
     Should Be Equal    ${actual_name}    ${expected_name}
+
+Get Callee Number From Home Screen
+    [Documentation]    Reads AU DID from home header. Falls back to deviceDetails calleeNumber if UI missing.
+    Navigate To Home Screen
+    ${visible}=    Run Keyword And Return Status    Wait Until Page Contains Element    ${DEVICE_NUMBER}    30
+    IF    ${visible}
+        ${actual_callee_number}=    Get Text    ${DEVICE_NUMBER}
+        Log To Console    Raw Callee number: ${actual_callee_number}
+        ${CALLEE_NUMBER}=    Convert To Plain Number    ${actual_callee_number}
+        Set Global Variable    ${CALLEE_NUMBER}    ${CALLEE_NUMBER}
+        Log To Console    Callee Number: ${CALLEE_NUMBER}
+        RETURN    ${CALLEE_NUMBER}
+    END
+    Should Not Be Equal    ${CALLEE_NUMBER}    None    msg=DEVICE_NUMBER not on home and CALLEE_NUMBER unset in deviceDetails
+    Log To Console    Using CALLEE_NUMBER from deviceDetails: ${CALLEE_NUMBER}
+    RETURN    ${CALLEE_NUMBER}
+
+Make Post Call Review Toggle On
+    [Documentation]    Phone → Caption Settings: Post-call Review ON, Auto-save ON, Default Settings ON.
+    Navigate To Home Screen
+    Wait Until Element Is Visible    ${SETTINGS_APP}    ${DefaultTimeout}
+    Click Element                    ${SETTINGS_APP}
+    Wait Until Element Is Visible    ${SETTINGS_PHONE}    ${DefaultTimeout}
+    Click Element                    ${SETTINGS_PHONE}
+    Wait Until Element Is Visible    ${CAPTION_SETTING}    ${DefaultTimeout}
+    Click Element                    ${CAPTION_SETTING}
+    ${PostCallAttributeValue}=        Get Element Attribute    ${POST_CALL_REVIEW_TOGGLE}    content-desc
+    Run Keyword If    '${PostCallAttributeValue}'.lower() == 'off'
+    ...    Click Element    ${POST_CALL_REVIEW_TOGGLE}
+    Set Auto Save Captions To ON
+    ${CaptionSettingAttributeValue}=    Get Element Attribute    ${CAPTION_SETTINGS_TOGGLE}    content-desc
+    Run Keyword If    '${CaptionSettingAttributeValue}'.lower() == 'off'
+    ...    Click Element    ${CAPTION_SETTINGS_TOGGLE}
+    Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
+    Click Element                    ${HOME_BTN}
+
+Set Auto Save Captions To ${STATUS}
+    Wait Until Element Is Visible    ${AUTO_SAVE_CAPTIONS_TOGGLE}    ${DefaultTimeout}
+    ${current_status}=    Get Element Attribute    ${AUTO_SAVE_CAPTIONS_TOGGLE}    content-desc
+    Run Keyword If    '${current_status}'.lower() != '${STATUS}'.lower()
+    ...    Click Element    ${AUTO_SAVE_CAPTIONS_TOGGLE}
+    Log To Console    Auto-save Captions set to ${STATUS}

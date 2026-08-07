@@ -94,3 +94,60 @@ Verify Hidden Menu Is Not In Settings
     ...    Scroll Element Into View    locator=${SETTINGS_HIDDEN_MENU}    max_swipes=5    direction=down
     Should Be Equal    ${found}    ${False}    msg=Hidden Menu is displayed when it should not be
     Tap Settings Home Button
+
+Tap on Sounds option in settings
+    Wait Until Element Is Visible    ${SOUNDS}    ${DefaultTimeout}
+    Click Element    ${SOUNDS}
+    Log To Console    Opened Sounds settings
+
+Set Ringtone Frequency
+    [Arguments]    ${expected_frequency}
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_INPUT_FIELD}    ${DefaultTimeout}
+    ${current_frequency}=    Get Text    ${RINGTONE_FREQUENCY_INPUT_FIELD}
+    IF    '${current_frequency}' == '${expected_frequency}'
+        Log To Console    Ringtone Frequency already ${expected_frequency}
+        RETURN
+    END
+    Click Element    ${RINGTONE_FREQUENCY_INPUT_FIELD}
+    Sleep    1s
+    IF    '${expected_frequency}' == 'Low'
+        Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_OPTION_LOW}    ${DefaultTimeout}
+        Click Element    ${RINGTONE_FREQUENCY_OPTION_LOW}
+    ELSE IF    '${expected_frequency}' == 'Med'
+        Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_OPTION_MEDIUM}    ${DefaultTimeout}
+        Click Element    ${RINGTONE_FREQUENCY_OPTION_MEDIUM}
+    ELSE IF    '${expected_frequency}' == 'High'
+        Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_OPTION_HIGH}    ${DefaultTimeout}
+        Click Element    ${RINGTONE_FREQUENCY_OPTION_HIGH}
+    END
+    Log To Console    Ringtone Frequency set to ${expected_frequency}
+
+Input Sound Volume Field
+    [Arguments]    ${locator}    ${value}
+    Wait Until Element Is Visible    ${locator}    ${DefaultTimeout}
+    Input Value In Text Field    ${locator}    ${value}
+    Dismiss Soft Keyboard
+    Sleep    1s
+
+Make Sound settings Default
+    [Documentation]    Amplify OFF, ringtone vol 1 / Low, handset/headset/speaker 7. Uses Hide Keyboard (not BACK).
+    Navigate To Home Screen
+    the user navigates to Settings
+    Tap on Sounds option in settings
+    Wait Until Element Is Visible    ${AMPLIFY_RESET}    ${DefaultTimeout}
+    ${amplify_reset_status}=    Get Element Attribute    ${AMPLIFY_RESET}    content-desc
+    IF    '${amplify_reset_status}'.upper() == 'ON'
+        Click Element    ${AMPLIFY_RESET}
+        Wait Until Element Is Visible    ${AMPLIFY_RESET}    ${DefaultTimeout}
+    ELSE
+        Log To Console    Amplify Reset already OFF
+    END
+    Input Sound Volume Field    ${RINGTONE_VOLUME_TEXT_FIELD}    1
+    Set Ringtone Frequency    expected_frequency=Low
+    Input Sound Volume Field    ${HANDSET_VOLUME_TEXT_FIELD}    7
+    Input Sound Volume Field    ${HEADSET_VOLUME_TEXT_FIELD}    7
+    Input Sound Volume Field    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    7
+    Wait Until Element Is Visible    ${TOOLBAR_BACK_BTN}    ${DefaultTimeout}
+    Click Element    ${TOOLBAR_BACK_BTN}
+    Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
+    Click Element                    ${HOME_BTN}

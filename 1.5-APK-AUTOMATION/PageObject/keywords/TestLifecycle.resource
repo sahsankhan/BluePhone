@@ -171,6 +171,11 @@ Scenario 1 Onboarding Test Setup
 Scenario 1 Onboarding Test Teardown
     Capture Failure Artifacts
 
+Scenario 1 Full E2E Test Teardown
+    [Documentation]    Part A+B: capture SIP on failure and clean VoIP containers after call steps.
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session
+
 # --- Scenario_1: partial non-call run (optional) ---
 
 Scenario 1 Non Call Test Setup
