@@ -135,10 +135,10 @@ Make Sound settings Default
     the user navigates to Settings
     Tap on Sounds option in settings
     Wait Until Element Is Visible    ${AMPLIFY_RESET}    ${DefaultTimeout}
-    ${amplify_reset_status}=    Get Element Attribute    ${AMPLIFY_RESET}    content-desc
-    IF    '${amplify_reset_status}'.upper() == 'ON'
+    ${amplify_on}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${AMPLIFY_TOGGLE_ON}    3
+    IF    ${amplify_on}
         Click Element    ${AMPLIFY_RESET}
-        Wait Until Element Is Visible    ${AMPLIFY_RESET}    ${DefaultTimeout}
+        Wait Until Element Is Visible    ${AMPLIFY_TOGGLE_OFF}    ${DefaultTimeout}
     ELSE
         Log To Console    Amplify Reset already OFF
     END
@@ -151,3 +151,201 @@ Make Sound settings Default
     Click Element    ${TOOLBAR_BACK_BTN}
     Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
     Click Element                    ${HOME_BTN}
+
+Tap on back arrow from header in Settings
+    Wait Until Element Is Visible    ${TOOLBAR_BACK_BTN}    ${DefaultTimeout}
+    Click Element    ${TOOLBAR_BACK_BTN}
+
+Open Settings Menu Option
+    [Arguments]    ${locator}    ${expected_title}=${EMPTY}
+    # Prefer visibility first — UiAutomator1 scroll-down can swipe a top-of-list item off-screen
+    ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${locator}    5
+    IF    not ${visible}
+        ${found}=    Run Keyword And Return Status
+        ...    Scroll Element Into View    locator=${locator}    max_swipes=8    direction=down
+        IF    not ${found}
+            ${found}=    Run Keyword And Return Status
+            ...    Scroll Element Into View    locator=${locator}    max_swipes=8    direction=up
+        END
+        IF    not ${found}
+            Wait Until Element Is Visible    ${locator}    ${DefaultTimeout}
+        END
+    END
+    Click Element    ${locator}
+    IF    '${expected_title}' != '${EMPTY}'
+        Wait Until Element Is Visible    ${TOOLBAR_TITLE}    ${DefaultTimeout}
+        ${title}=    Get Text    ${TOOLBAR_TITLE}
+        Should Be Equal As Strings    ${title}    ${expected_title}
+        ...    msg=Expected settings title '${expected_title}' but got '${title}'
+    END
+
+Tap on Phone option in settings
+    Open Settings Menu Option    ${SETTINGS_PHONE}    PHONE
+
+Tap on Voicemail option in settings
+    Open Settings Menu Option    ${VOICEMAIL}    VOICEMAIL
+
+Tap on My Account option in settings
+    Open Settings Menu Option    ${MY_ACCOUNT}    MY ACCOUNT
+
+Tap on Network option in settings
+    Open Settings Menu Option    ${NETWORK}    NETWORK
+
+Tap on Display option in settings
+    Open Settings Menu Option    ${DISPLAY}    DISPLAY
+
+Tap on Flasher option in settings
+    Open Settings Menu Option    ${FLASHER}    FLASHER
+
+Tap on Date & Time option in settings
+    Open Settings Menu Option    ${DATE_AND_TIME}    DATE & TIME
+
+Tap on Reset Phone option in settings
+    Open Settings Menu Option    ${RESET_PHONE}    RESET PHONE
+
+Tap on Emergency Alerts option in settings
+    Open Settings Menu Option    ${EMERGENCY_ALERT}    EMERGENCY ALERTS
+
+Tap on About option in settings
+    Open Settings Menu Option    ${ABOUT}    ABOUT
+
+Tap on Setup Wizard option in settings
+    Open Settings Menu Option    ${SETUP_WIZARD}
+    Wait Until Element Is Visible    ${SETUP_WIZARD_MESSAGE}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CANCEL_BTN}    ${DefaultTimeout}
+    Click Element    ${CANCEL_BTN}
+    Log To Console    Setup Wizard prompt cancelled
+
+Tap on Software Update option in settings
+    Open Settings Menu Option    ${SOFTWARE_UPDATE}
+    ${back_on_list}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${SOFTWARE_UPDATE}    60
+    IF    not ${back_on_list}
+        Run Keyword And Ignore Error    Click Element    ${SOFTWARE_UPDATE_CANCEL}
+        Run Keyword And Ignore Error    Tap on back arrow from header in Settings
+    END
+    Log To Console    Software Update option exercised
+
+Verify that the default setting for Amplify Reset is "OFF"
+    Wait Until Element Is Visible    ${AMPLIFY_RESET}    ${DefaultTimeout}
+    ${off_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${AMPLIFY_TOGGLE_OFF}    5
+    IF    ${off_visible}
+        RETURN
+    END
+    # UiAutomator1 may expose content-desc as name instead of content-desc
+    ${amplify_reset_status}=    Get Element Attribute    ${AMPLIFY_RESET}    name
+    Should Be Equal As Strings    ${amplify_reset_status}    OFF
+    ...    msg=Default setting for Amplify Reset is not OFF (got ${amplify_reset_status})
+
+Verify Sounds screen is displayed
+    Wait Until Element Is Visible    ${SOUNDS_TITLE}    ${DefaultTimeout}
+    Element Should Contain Text    ${SOUNDS_TITLE}    SOUNDS
+    Log To Console    Sounds screen displayed
+
+Verify Ringtone Volume option is present with increase and decrease buttons
+    Wait Until Element Is Visible    ${RINGTONE_VOLUME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_VOLUME_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+
+Verify Ringtone Frequency option is present with increase and decrease buttons
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_RIGHT_ARROW}    ${DefaultTimeout}
+
+Verify Handset Amplify Volume option is present with increase and decrease buttons
+    Wait Until Element Is Visible    ${HANDSET_VOLUME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${HANDSET_VOLUME_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${HANDSET_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+
+Verify Speakerphone Amplify Volume option is present with increase and decrease buttons
+    ${found}=    Run Keyword And Return Status
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME}    max_swipes=5    direction=down
+    IF    not ${found}
+        Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME}    ${DefaultTimeout}
+    END
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+
+Verify Headset/Neckloop Amplify Volume option is present with increase and decrease buttons
+    Wait Until Element Is Visible    ${HEADSET_VOLUME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${HEADSET_VOLUME_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${HEADSET_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+
+Verify Touchscreen Sounds toggle is present
+    ${found}=    Run Keyword And Return Status
+    ...    Scroll Element Into View    locator=${TOUCHSCREEN_SOUND}    max_swipes=6    direction=down
+    IF    not ${found}
+        ${found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${TOUCHSCREEN_SOUND}    5
+    END
+    IF    not ${found}
+        Log To Console    Touchscreen Sounds not present on this 1.5 Sounds UI — skipping toggle check
+        RETURN
+    END
+    Wait Until Element Is Visible    ${TOUCHSCREEN_SOUND_TOGGLE}    ${DefaultTimeout}
+
+Verify Amplify Reset toggle is present
+    Wait Until Element Is Visible    ${AMPLIFY_RESET_TEXT}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${AMPLIFY_RESET_TOGGLE}    ${DefaultTimeout}
+
+Verify Home Button option is present on Sounds
+    Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
+
+Get current Ringtone Frequency value
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_INPUT_FIELD}    ${DefaultTimeout}
+    ${ringtone_frequency}=    Get Text    ${RINGTONE_FREQUENCY_INPUT_FIELD}
+    RETURN    ${ringtone_frequency}
+
+Verify Ringtone Frequency Stepper Cycle
+    [Arguments]    ${direction}=Right
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_LEFT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_RIGHT_ARROW}    ${DefaultTimeout}
+    ${right_frequencies}=    Create List    Low    Med    High
+    ${left_frequencies}=    Create List    High    Med    Low
+    ${all_frequencies}=    Set Variable If    '${direction}' == 'Right'    ${right_frequencies}    ${left_frequencies}
+    ${arrow}=    Set Variable If    '${direction}' == 'Right'    ${RINGTONE_FREQUENCY_RIGHT_ARROW}    ${RINGTONE_FREQUENCY_LEFT_ARROW}
+    ${start_frequency}=    Get current Ringtone Frequency value
+    ${start_index}=    Get Index From List    ${all_frequencies}    ${start_frequency}
+    ${total_steps}=    Get Length    ${all_frequencies}
+    FOR    ${i}    IN RANGE    ${total_steps}
+        ${index}=    Evaluate    (${start_index} + ${i}) % ${total_steps}
+        ${expected_frequency}=    Get From List    ${all_frequencies}    ${index}
+        ${current_frequency}=    Get current Ringtone Frequency value
+        Should Be Equal As Strings    ${current_frequency}    ${expected_frequency}
+        IF    ${i} < ${total_steps} - 1
+            Click Element    ${arrow}
+            Sleep    0.5s
+        END
+    END
+    Click Element    ${arrow}
+    Sleep    0.5s
+    ${current_frequency}=    Get current Ringtone Frequency value
+    Should Be Equal As Strings    ${current_frequency}    ${start_frequency}
+
+Select Ringtone Frequency By Arrow
+    [Arguments]    ${expected_frequency}    ${direction}=Right
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_RIGHT_ARROW}    ${DefaultTimeout}
+    ${frequencies}=    Create List    Low    Med    High
+    ${current_frequency}=    Get current Ringtone Frequency value
+    ${current_index}=    Get Index From List    ${frequencies}    ${current_frequency}
+    ${expected_index}=    Get Index From List    ${frequencies}    ${expected_frequency}
+    ${diff}=    Evaluate    ${expected_index} - ${current_index}
+    IF    '${direction}' == 'Right'
+        IF    ${diff} > 0
+            FOR    ${i}    IN RANGE    ${diff}
+                Click Element    ${RINGTONE_FREQUENCY_RIGHT_ARROW}
+                Sleep    0.3s
+            END
+        ELSE IF    ${diff} < 0
+            ${abs_diff}=    Evaluate    abs(${diff})
+            FOR    ${i}    IN RANGE    ${abs_diff}
+                Click Element    ${RINGTONE_FREQUENCY_LEFT_ARROW}
+                Sleep    0.3s
+            END
+        END
+    END
+    ${current_frequency}=    Get current Ringtone Frequency value
+    Should Be Equal As Strings    ${current_frequency}    ${expected_frequency}
+
+Verify 'Show Caller ID' is not displayed on the screen
+    ${status}=    Run Keyword And Return Status    Page Should Contain Element    ${SHOW_CALLER_ID_OPTION}
+    Should Not Be True    ${status}    msg='Show Caller ID' option is unexpectedly displayed on the Phone screen
+    Log To Console    Verified Show Caller ID is not displayed

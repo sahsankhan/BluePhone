@@ -99,37 +99,37 @@ ${VOIP_MENU}                    xpath=//android.widget.TextView[@resource-id="cl
 ${TIME_UP_ARROW}                    id=clrcap.CCClient:id/ivUp
 ${TIME_DOWN_ARROW}                  id=clrcap.CCClient:id/ivDown
 ${SOFTWARE_IS_UP_TO_DATE_TEXT}    xpath=//android.widget.TextView[@text="Software is up to date."]
-#Sounds settings locators
+#Sounds settings locators (1.5: labels are plain @text; steppers are LinearLayout scv_*)
 ${SOUNDS_TITLE}                id=clrcap.CCClient:id/tv_toolbar_title
-${RINGTONE_VOLUME}            id=clrcap.CCClient:id/text_ringtone_volume
-${RINGTONE_VOLUME_TEXT_FIELD}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//android.widget.EditText[@resource-id="clrcap.CCClient:id/etValue"]
-${RINGTONE_VOLUME_LEFT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivDown"]
-${RINGTONE_VOLUME_RIGHT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivUp"]
-${RINGTONE_FREQUENCY}            id=clrcap.CCClient:id/text_ringtone_frequency
-${RINGTONE_FREQUENCY_LEFT_ARROW}       xpath=//android.view.ViewGroup[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivDown"]
-${RINGTONE_FREQUENCY_RIGHT_ARROW}       xpath=//android.view.ViewGroup[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivUp"]
-${RINGTONE_FREQUENCY_INPUT_FIELD}       xpath=//android.view.ViewGroup[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//android.widget.TextView[@resource-id="clrcap.CCClient:id/tvValue"]
-${AMPLIFY_RESET_TEXT}                    id=clrcap.CCClient:id/text_audio_amp
+${RINGTONE_VOLUME}            xpath=//*[@text="Ringtone Volume"]
+${RINGTONE_VOLUME_TEXT_FIELD}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//*[@resource-id="clrcap.CCClient:id/etValue"]
+${RINGTONE_VOLUME_LEFT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
+${RINGTONE_VOLUME_RIGHT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_volume"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${RINGTONE_FREQUENCY}            xpath=//*[@text="Ringtone Frequency"]
+${RINGTONE_FREQUENCY_LEFT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
+${RINGTONE_FREQUENCY_RIGHT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${RINGTONE_FREQUENCY_INPUT_FIELD}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_ringer_frequency"]//*[@resource-id="clrcap.CCClient:id/tvValue"]
+${AMPLIFY_RESET_TEXT}                    xpath=//*[@text="Amplify Reset"]
 ${AMPLIFY_RESET_TOGGLE}       id=clrcap.CCClient:id/csv_boost
-${AMPLIFY_TOGGLE_OFF}       xpath=//android.view.View[@content-desc="OFF"]
-${AMPLIFY_TOGGLE_ON}       xpath=//android.view.View[@content-desc="ON"]
-${HANDSET_VOLUME}            id=clrcap.CCClient:id/text_handset_volume
-${HANDSET_VOLUME_LEFT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivDown"]
-${HANDSET_VOLUME_RIGHT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivUp"]
-${HANDSET_VOLUME_TEXT_FIELD}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//android.widget.EditText[@resource-id="clrcap.CCClient:id/etValue"]
-${HEADSET_VOLUME}            id=clrcap.CCClient:id/text_headset_volume
-${HEADSET_VOLUME_LEFT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivDown"]
-${HEADSET_VOLUME_RIGHT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivUp"]
-${HEADSET_VOLUME_TEXT_FIELD}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//android.widget.EditText[@resource-id="clrcap.CCClient:id/etValue"]
-${SPEAKERPHONE_VOLUME}        id=clrcap.CCClient:id/text_speaker_volume
-${SPEAKERPHONE_VOLUME_LEFT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivDown"]
-${SPEAKERPHONE_VOLUME_RIGHT_ARROW}       xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//android.widget.ImageView[@resource-id="clrcap.CCClient:id/ivUp"]
-${SPEAKERPHONE_VOLUME_TEXT_FIELD}        xpath=//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//android.widget.EditText[@resource-id="clrcap.CCClient:id/etValue"]
+${AMPLIFY_TOGGLE_OFF}       xpath=//*[@resource-id="clrcap.CCClient:id/csv_boost" and @content-desc="OFF"]
+${AMPLIFY_TOGGLE_ON}       xpath=//*[@resource-id="clrcap.CCClient:id/csv_boost" and @content-desc="ON"]
+${HANDSET_VOLUME}            xpath=//*[@text="Handset Volume"]
+${HANDSET_VOLUME_LEFT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
+${HANDSET_VOLUME_RIGHT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${HANDSET_VOLUME_TEXT_FIELD}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_handset_volume"]//*[@resource-id="clrcap.CCClient:id/etValue"]
+${HEADSET_VOLUME}            xpath=//*[@text="Headset Volume"]
+${HEADSET_VOLUME_LEFT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
+${HEADSET_VOLUME_RIGHT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${HEADSET_VOLUME_TEXT_FIELD}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_headset_volume"]//*[@resource-id="clrcap.CCClient:id/etValue"]
+${SPEAKERPHONE_VOLUME}        xpath=//*[@text="Speakerphone Volume"]
+${SPEAKERPHONE_VOLUME_LEFT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
+${SPEAKERPHONE_VOLUME_RIGHT_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${SPEAKERPHONE_VOLUME_TEXT_FIELD}        xpath=//*[@resource-id="clrcap.CCClient:id/scv_speakerphone_volume"]//*[@resource-id="clrcap.CCClient:id/etValue"]
 ${NUMERIC_KEYBOARD}           xpath=(//android.widget.FrameLayout[@resource-id="android:id/content"])[2]
-${TOUCHSCREEN_SOUND}            id=clrcap.CCClient:id/text_touchscreen_sounds
+${TOUCHSCREEN_SOUND}            xpath=//*[@text="Touchscreen Sounds" or @text="Touchscreen Sound"]
 ${TOUCHSCREEN_SOUND_TOGGLE}       id=clrcap.CCClient:id/csv_keyboard
-${TOUCHSCREEN_SOUND_TOGGLE_OFF}       xpath=//android.view.View[@content-desc="OFF"]
-${TOUCHSCREEN_SOUND_TOGGLE_ON}       xpath=//android.view.View[@content-desc="ON"]
+${TOUCHSCREEN_SOUND_TOGGLE_OFF}       xpath=//*[@resource-id="clrcap.CCClient:id/csv_keyboard" and @content-desc="OFF"]
+${TOUCHSCREEN_SOUND_TOGGLE_ON}       xpath=//*[@resource-id="clrcap.CCClient:id/csv_keyboard" and @content-desc="ON"]
 ${RINGTONE_FREQUENCY_OPTIONS_CONTAINER}       xpath=/hierarchy/android.widget.FrameLayout
 ${RINGTONE_FREQUENCY_OPTION_LOW}       xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="Low"]
 ${RINGTONE_FREQUENCY_OPTION_MEDIUM}       xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="Med"]
@@ -208,7 +208,7 @@ ${MISSED_CALLS_TOGGLE}                          xpath=//android.view.View[@resou
 ${BRIGHTNESS_SEEKBAR}                           xpath=//android.widget.SeekBar[@resource-id="clrcap.CCClient:id/sb_brightness"]
 
 ${VOICEMAIL_FLASH_LIGHT_TOGGLE}                 xpath=//android.widget.TextView[@text="Flash light when I have\nnew messages."]/following-sibling::android.view.View[@resource-id="clrcap.CCClient:id/switch_on_off"]
-${SHOW_CALLER_ID_OPTION}                        id=clrcap.CCClient:id/switch_on_off
+${SHOW_CALLER_ID_OPTION}                        xpath=//*[contains(@text,'Show Caller ID') or contains(@text,'Caller ID')]
 
 ${EMERGENCY_ALERTS_TOGGLE}                      xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/text_view_standart' and @text='Emergency Alerts']/following-sibling::android.view.View[@resource-id='clrcap.CCClient:id/switch_on_off']
 ${SPEED_OPTIONS_BOX}                            id=clrcap.CCClient:id/speedValue

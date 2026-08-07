@@ -212,3 +212,12 @@ Scenario 1 Piece Connect Setup
 Scenario 1 Piece Connect Teardown
     Capture Failure Artifacts With SIP Logs
     Cleanup VoIP Call Session
+
+# --- UI_UX pure-UI cases (no VoIP) ---
+
+UI UX Test Setup
+    Connecting to BLUphone
+
+UI UX Test Teardown
+    Capture Failure Artifacts
+    Run Keyword And Ignore Error    Navigate To Home Screen
