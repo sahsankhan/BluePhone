@@ -117,6 +117,10 @@ the user is on the Settings screen
 the user navigates to the Date & Time screen
     Tap on Date & Time option in settings
 
+the AU is on the Settings, Date & Time screen
+    the user navigates to Settings
+    Tap on Date & Time option in settings
+
 a Home button is visible in the lower left corner of the screen
     Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
     Element Should Be Visible    ${HOME_BTN}

@@ -406,6 +406,46 @@ a non-interactive field displays the current date
     ...    msg=Year field invalid: '${year}'
     Log To Console    Found date field text: ${month}/${day}/${year}
 
+the AU taps on the time zone rotating selector field
+    Wait Until Element Is Visible    ${TIME_ZONE_VALUE}    ${DefaultTimeout}
+    Click Element    ${TIME_ZONE_VALUE}
+    Sleep    1s
+    Log To Console    Tapped time zone selector value
+
+a pop-out selector screen appears
+    [Documentation]    Tapping tvValue opens the timezone list (lvList / android:id/text1 options).
+    ${list_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${TIME_ZONE_SELECTOR}    8
+    IF    not ${list_visible}
+        Wait Until Element Is Visible    ${PACIFIC_TIME}    ${DefaultTimeout}
+    END
+    Log To Console    Time zone pop-out / list selector appeared
+
+the following time zone options are displayed: Hawaii Time, Alaska Time, Pacific Time, Arizona Time, Mountain Time, Central Time, Eastern Time
+    Verify Time Zone Options In Popout
+
+Verify Time Zone Options In Popout
+    @{expected_locs}=    Create List    ${HAWAII_TIME}    ${ALASKA_TIME}    ${PACIFIC_TIME}    ${ARIZONA_TIME}    ${MOUNTAIN_TIME}    ${CENTRAL_TIME}    ${EASTERN_TIME}
+    @{expected_names}=    Create List    Hawaii Time    Alaska Time    Pacific Time    Arizona Time    Mountain Time    Central Time    Eastern Time
+    ${len}=    Get Length    ${expected_locs}
+    FOR    ${i}    IN RANGE    ${len}
+        ${loc}=    Get From List    ${expected_locs}    ${i}
+        ${name}=    Get From List    ${expected_names}    ${i}
+        ${found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${loc}    5
+        IF    not ${found}
+            # Some zones may need a short swipe in the list
+            Run Keyword And Ignore Error    Scroll Element Into View    locator=${loc}    max_swipes=4    direction=down
+            Wait Until Element Is Visible    ${loc}    ${DefaultTimeout}
+        END
+        ${text}=    Get Text    ${loc}
+        Should Be Equal As Strings    ${text}    ${name}
+        ...    msg=Time zone option mismatch for ${name}: got '${text}'
+        Log To Console    Found time zone option: ${text}
+    END
+    Log To Console    All expected time zone options verified in pop-out
+    # Dismiss list by selecting current/pacific so Date & Time screen is restored for teardown
+    Run Keyword And Ignore Error    Click Element    ${PACIFIC_TIME}
+    Sleep    1s
+
 Verify 'Show Caller ID' is not displayed on the screen
     ${status}=    Run Keyword And Return Status    Page Should Contain Element    ${SHOW_CALLER_ID_OPTION}
     Should Not Be True    ${status}    msg='Show Caller ID' option is unexpectedly displayed on the Phone screen

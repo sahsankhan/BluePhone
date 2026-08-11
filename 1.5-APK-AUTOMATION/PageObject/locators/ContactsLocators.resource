@@ -24,3 +24,8 @@ ${CONTACT_CANCEL_HEADER_BTN}    id=clrcap.CCClient:id/ib_toolbar_cancel
 ${CONTACT_REMOVE_NUMBER_ICON}   id=clrcap.CCClient:id/iv_cancel
 ${CONTACT_PHONE_FIELD_COUNT}    //android.widget.EditText[@resource-id="clrcap.CCClient:id/et_phone"]
 ${CONTACT_REMOVE_NUMBER_COUNT}  //android.widget.ImageView[@resource-id="clrcap.CCClient:id/iv_cancel"]
+${CONTACT_ADD_NUMBER_BTN}       xpath=//android.widget.TextView[@text="ADD NUMBER"]
+${CONTACT_ADD_NUMBER_ICON}      id=clrcap.CCClient:id/btn_add_field
+${CONTACT_PHONE_TYPE_SPINNER}   id=clrcap.CCClient:id/spinner
+${CONTACT_PHONE_TYPE_TEXT}      xpath=//*[@resource-id="clrcap.CCClient:id/spinner"]//*[@resource-id="android:id/text1"]
+${CONTACT_PHONE_TYPE_COUNT}     //*[@resource-id="clrcap.CCClient:id/spinner"]//*[@resource-id="android:id/text1"]

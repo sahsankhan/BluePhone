@@ -180,3 +180,70 @@ Open Test Contact Detail From Contacts List
     Click Element    ${CONTACT_NAME_IN_LIST}
     Wait Until Element Is Visible    ${CONTACT_SAVED_PHONE_NUMBER}    ${DefaultTimeout}
     Log To Console    Opened contact detail for ${contact_name}
+
+the user is adding a contact
+    Open Contacts List Screen
+    Tap Add Contact Button
+
+the new contact screen displays an "Add Number" button
+    ${add_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    5
+    IF    not ${add_visible}
+        Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    ${DefaultTimeout}
+        Log To Console    Add Number icon (btn_add_field) visible
+    ELSE
+        Log To Console    ADD NUMBER button visible
+    END
+
+the user is on the Contacts screen
+    Open Contacts List Screen
+
+the AU taps the back arrow or Home button
+    Wait Until Element Is Visible    ${CONTACT_HOME_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_HOME_BTN}
+    Log To Console    Tapped Contacts Home button
+
+it returns the user to the main menu
+    Wait Until Element Is Visible    ${CONTACT_APP}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_APP}
+    Log To Console    Returned to main menu / home
+
+the user adds a phone number field
+    Open Contacts List Screen
+    Tap Add Contact Button
+    ${add_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    5
+    IF    ${add_visible}
+        Click Element    ${CONTACT_ADD_NUMBER_BTN}
+    ELSE
+        Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    ${DefaultTimeout}
+        Click Element    ${CONTACT_ADD_NUMBER_ICON}
+    END
+    Sleep    1s
+    Log To Console    Added extra phone number field
+
+the default phone type option is Mobile for all new phone number fields
+    Verify Default Phone Type Is Mobile
+
+Verify Default Phone Type Is Mobile
+    Wait Until Element Is Visible    ${CONTACT_PHONE_TYPE_SPINNER}    ${DefaultTimeout}
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_TYPE_COUNT}
+    Should Be True    ${count} >= 1
+    ...    msg=Expected at least 1 phone type spinner, found ${count}
+    FOR    ${i}    IN RANGE    1    ${count}+1
+        ${text}=    Get Text    xpath=(${CONTACT_PHONE_TYPE_COUNT})[${i}]
+        Should Be Equal As Strings    ${text}    Mobile
+        ...    msg=Phone type #${i} expected Mobile but got '${text}'
+    END
+    Log To Console    Default phone type Mobile verified on ${count} field(s)
+
+the AU taps on CANCEL button
+    ${cancel_keycode}=    Get Value From Yaml File    keycodes    KEYPAD_CANCEL
+    Press Keycode    ${cancel_keycode}
+    Sleep    2s
+    Log To Console    Pressed CANCEL keycode ${cancel_keycode}
+
+If the user has not entered at least one character in a field and hits Cancel, the system immediately redirects to the main contacts list screen
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    ${still_on_form}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    3
+    Should Not Be True    ${still_on_form}
+    ...    msg=Cancel with empty form should leave New Contact and return to contacts list
+    Log To Console    Cancel with empty form returned to contacts list
