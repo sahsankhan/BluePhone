@@ -18,3 +18,9 @@ ${CONTACT_SUPPORT_ENTRY}        xpath=//android.widget.TextView[@resource-id='cl
 ${CONTACT_HEART_ON_AVATAR}      id=clrcap.CCClient:id/iv_contact_favorite
 ${CONTACT_DETAIL_FULL_NAME}     id=clrcap.CCClient:id/tv_full_name
 ${CONTACT_TOOLBAR_BACK}         id=clrcap.CCClient:id/ib_toolbar_back
+${DEVICE_NUMBER_FROM_CONTACT}   id=clrcap.CCClient:id/my_number
+${CONTACT_HEADER_ICON}          id=clrcap.CCClient:id/iv_toolbar_icon
+${CONTACT_CANCEL_HEADER_BTN}    id=clrcap.CCClient:id/ib_toolbar_cancel
+${CONTACT_REMOVE_NUMBER_ICON}   id=clrcap.CCClient:id/iv_cancel
+${CONTACT_PHONE_FIELD_COUNT}    //android.widget.EditText[@resource-id="clrcap.CCClient:id/et_phone"]
+${CONTACT_REMOVE_NUMBER_COUNT}  //android.widget.ImageView[@resource-id="clrcap.CCClient:id/iv_cancel"]

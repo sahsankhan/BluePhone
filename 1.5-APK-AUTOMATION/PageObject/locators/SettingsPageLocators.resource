@@ -85,8 +85,14 @@ ${PERSONAL_SETTINGS}             id=clrcap.CCClient:id/tv_personal_settings
 ${AUTO_REBOOT_TIME}              id=clrcap.CCClient:id/tv_auto_reboot_settings
 
 ${DELETE_ALERT_MSG}              id=clrcap.CCClient:id/tv_alert_delete_title
-${SETTINGS_TIME}                 id=clrcap.CCClient:id/tvTime
-${SETTINGS_DATE}                 id=clrcap.CCClient:id/tvDate
+${SETTINGS_TIME}                 id=clrcap.CCClient:id/time_input
+${SETTINGS_DATE}                 id=clrcap.CCClient:id/date_input
+${SETTINGS_TIME_HOURS}           id=clrcap.CCClient:id/hours
+${SETTINGS_TIME_MINUTES}         id=clrcap.CCClient:id/minutes
+${SETTINGS_TIME_AM_PM}           id=clrcap.CCClient:id/am_pm
+${SETTINGS_DATE_MONTH}           id=clrcap.CCClient:id/month
+${SETTINGS_DATE_DAY}             id=clrcap.CCClient:id/day
+${SETTINGS_DATE_YEAR}            id=clrcap.CCClient:id/year
 ${PHONE_CAPACITY}                xpath=(//android.widget.LinearLayout[@resource-id="clrcap.CCClient:id/ll_list_item"])[1]
 ${PHONE_CAPACITY_TITLE}          xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/tv_toolbar_title"]
 
@@ -155,7 +161,11 @@ ${ARIZONA_TIME}             xpath=//android.widget.TextView[@resource-id="androi
 ${MOUNTAIN_TIME}            xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="Mountain Time"]
 ${CENTRAL_TIME}             xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="Central Time"]
 ${EASTERN_TIME}             xpath=//android.widget.TextView[@resource-id="android:id/text1" and @text="Eastern Time"]
+# Date & Time timezone stepper (1.5 uses scv_timezone)
 ${TIME_ZONE_SELECTOR}       id=clrcap.CCClient:id/lvList
+${TIME_ZONE_VALUE}          xpath=//*[@resource-id="clrcap.CCClient:id/scv_timezone"]//*[@resource-id="clrcap.CCClient:id/tvValue"]
+${TIME_ZONE_UP_ARROW}       xpath=//*[@resource-id="clrcap.CCClient:id/scv_timezone"]//*[@resource-id="clrcap.CCClient:id/ivUp"]
+${TIME_ZONE_DOWN_ARROW}     xpath=//*[@resource-id="clrcap.CCClient:id/scv_timezone"]//*[@resource-id="clrcap.CCClient:id/ivDown"]
 ${USER_ID}                   id=clrcap.CCClient:id/tv_login
 
 ${ERROR_MESSAGE}              id=clrcap.CCClient:id/error_message

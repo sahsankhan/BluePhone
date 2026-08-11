@@ -71,6 +71,45 @@ Tap Add Contact Button
     Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
     Log To Console    Add contact form opened
 
+Verify Contacts My Number Formatting
+    Wait Until Element Is Visible    ${DEVICE_NUMBER_FROM_CONTACT}    ${DefaultTimeout}
+    ${actual_text}=    Get Text    ${DEVICE_NUMBER_FROM_CONTACT}
+    Log To Console    Contacts My Number text: ${actual_text}
+    Should Match Regexp    ${actual_text}    My Number: \\(\\d{3}\\) \\d{3}-\\d{4}
+    ...    msg=Expected 'My Number: (xxx) xxx-xxxx' but got '${actual_text}'
+
+Verify New Contact Header UI
+    Wait Until Element Is Visible    ${CONTACT_LIST_TITLE}    ${DefaultTimeout}
+    ${title}=    Get Text    ${CONTACT_LIST_TITLE}
+    Should Be Equal As Strings    ${title}    NEW CONTACT
+    ...    msg=Expected NEW CONTACT header but got '${title}'
+    Wait Until Element Is Visible    ${CONTACT_HEADER_ICON}    ${DefaultTimeout}
+    Log To Console    New Contact header icon + title verified
+
+Verify No Back Or Cancel On New Contact Header
+    ${back}=    Run Keyword And Return Status    Page Should Contain Element    ${CONTACT_TOOLBAR_BACK}
+    Should Not Be True    ${back}    msg=Back arrow should NOT be visible on New Contact header
+    ${cancel}=    Run Keyword And Return Status    Page Should Contain Element    ${CONTACT_CANCEL_HEADER_BTN}
+    Should Not Be True    ${cancel}    msg=Cancel button should NOT be visible on New Contact header
+
+Verify New Contact Name Fields Visible
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_LAST_NAME_FIELD}    ${DefaultTimeout}
+    Log To Console    First Name and Last Name fields visible
+
+Verify Single Phone Field With Remove Icon
+    # Smoke Fill New Contact uses id=et_phone — same locator here
+    Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    ${DefaultTimeout}
+    ${phone_count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be Equal As Integers    ${phone_count}    1
+    ...    msg=Expected exactly 1 phone number field, found ${phone_count}
+    # 1.5 can expose more than one iv_cancel in the hierarchy; require a visible remove control next to the phone row
+    ${cross_count}=    Get Matching Xpath Count    ${CONTACT_REMOVE_NUMBER_COUNT}
+    Should Be True    ${cross_count} >= 1
+    ...    msg=Expected at least 1 remove (X) icon next to phone field, found ${cross_count}
+    Wait Until Element Is Visible    ${CONTACT_REMOVE_NUMBER_ICON}    ${DefaultTimeout}
+    Log To Console    Phone field + remove icon verified (phones=${phone_count}, x_icons=${cross_count})
+
 Fill New Contact Form
     [Arguments]    ${first_name}    ${last_name}    ${phone_number}
     Click Element    ${CONTACT_FIRST_NAME_FIELD}

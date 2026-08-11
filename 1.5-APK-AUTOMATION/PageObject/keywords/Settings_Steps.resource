@@ -101,6 +101,26 @@ the user taps the right facing arrow to change the ringtone option
 the options will change from the current value to the next from low to mid to high and back to low again as the user continues to press the right facing arrow
     Verify Ringtone Frequency Stepper Cycle    direction=Right
 
+the user taps the left facing arrow to change the ringtone option
+    Select Ringtone Frequency By Arrow    expected_frequency=Med    direction=Left
+
+the options will change from the current value to the next from High to Mid to Low and back to High again as the user continues to press the left facing arrow
+    Verify Ringtone Frequency Stepper Cycle    direction=Left
+
+the user is on the Settings screen
+    the user navigates to Settings
+    Wait Until Element Is Visible    ${TOOLBAR_TITLE}    ${DefaultTimeout}
+    ${title}=    Get Text    ${TOOLBAR_TITLE}
+    Should Be Equal As Strings    ${title}    SETTINGS
+    ...    msg=Expected SETTINGS screen but got '${title}'
+
+the user navigates to the Date & Time screen
+    Tap on Date & Time option in settings
+
+a Home button is visible in the lower left corner of the screen
+    Wait Until Element Is Visible    ${HOME_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${HOME_BTN}
+
 the user has changed the Ringtone Frequency option to Low or to Med or to High
     Set Ringtone Frequency    expected_frequency=Med
 

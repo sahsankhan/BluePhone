@@ -67,3 +67,24 @@ the user selects a grey heart next to a phone number
 clicks on back button from favorites screen
     Wait Until Element Is Visible    ${FAVORITES_BACK_BTN}    ${DefaultTimeout}
     Click Element    ${FAVORITES_BACK_BTN}
+
+at the very top of the contacts list, the text should display "My Number: (xxx) xxx-xxxx" with the correct VOIP number and formatting
+    Verify Contacts My Number Formatting
+
+the AU taps on Contacts from the Home screen
+    Open Contacts List Screen
+
+the AU taps on the ADD '+' icon to create a new contact
+    Tap Add Contact Button
+
+the Add New Contact header displays only the head icon and "New Contact" text
+    Verify New Contact Header UI
+
+no back arrow or cancel button is displayed
+    Verify No Back Or Cancel On New Contact Header
+
+the New Contact screen displays the First Name and Last Name fields
+    Verify New Contact Name Fields Visible
+
+a single Phone Number field is displayed with a red [X] button next to it
+    Verify Single Phone Field With Remove Icon

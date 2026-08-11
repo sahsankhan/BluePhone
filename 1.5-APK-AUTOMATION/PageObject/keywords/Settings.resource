@@ -323,6 +323,7 @@ Verify Ringtone Frequency Stepper Cycle
 Select Ringtone Frequency By Arrow
     [Arguments]    ${expected_frequency}    ${direction}=Right
     Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_RIGHT_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${RINGTONE_FREQUENCY_LEFT_ARROW}    ${DefaultTimeout}
     ${frequencies}=    Create List    Low    Med    High
     ${current_frequency}=    Get current Ringtone Frequency value
     ${current_index}=    Get Index From List    ${frequencies}    ${current_frequency}
@@ -341,9 +342,69 @@ Select Ringtone Frequency By Arrow
                 Sleep    0.3s
             END
         END
+    ELSE IF    '${direction}' == 'Left'
+        # Left cycles High <- Med <- Low; move expected_index steps "backwards"
+        ${steps}=    Evaluate    (${current_index} - ${expected_index}) % 3
+        FOR    ${i}    IN RANGE    ${steps}
+            Click Element    ${RINGTONE_FREQUENCY_LEFT_ARROW}
+            Sleep    0.3s
+        END
     END
     ${current_frequency}=    Get current Ringtone Frequency value
     Should Be Equal As Strings    ${current_frequency}    ${expected_frequency}
+
+the screen displays a rotating selector field for the time zone
+    Wait Until Element Is Visible    ${TIME_ZONE_VALUE}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${TIME_ZONE_UP_ARROW}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${TIME_ZONE_DOWN_ARROW}    ${DefaultTimeout}
+    ${before}=    Get Text    ${TIME_ZONE_VALUE}
+    Click Element    ${TIME_ZONE_DOWN_ARROW}
+    Sleep    0.5s
+    ${after}=    Get Text    ${TIME_ZONE_VALUE}
+    Log To Console    Time zone before: "${before}", after down arrow: "${after}"
+    Should Not Be Equal    ${before}    ${after}
+    Click Element    ${TIME_ZONE_UP_ARROW}
+    Sleep    0.5s
+
+the time zone reflects the phone's current location
+    Wait Until Element Is Visible    ${TIME_ZONE_VALUE}    ${DefaultTimeout}
+    ${current_time_zone}=    Get Text    ${TIME_ZONE_VALUE}
+    Should Not Be Empty    ${current_time_zone}
+    Log To Console    Current time zone displayed: "${current_time_zone}"
+
+a non-interactive field displays the current time
+    [Documentation]    1.5 Date & Time splits time across hours/minutes/am_pm under time_input (not 2.0 tvTime).
+    Wait Until Element Is Visible    ${SETTINGS_TIME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_TIME_HOURS}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_TIME_MINUTES}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_TIME_AM_PM}    ${DefaultTimeout}
+    ${hours}=    Get Text    ${SETTINGS_TIME_HOURS}
+    ${minutes}=    Get Text    ${SETTINGS_TIME_MINUTES}
+    ${ampm}=    Get Text    ${SETTINGS_TIME_AM_PM}
+    Should Match Regexp    ${hours}    ^(1[0-2]|[1-9])$
+    ...    msg=Hours field invalid: '${hours}'
+    Should Match Regexp    ${minutes}    ^[0-5][0-9]$
+    ...    msg=Minutes field invalid: '${minutes}'
+    Should Match Regexp    ${ampm}    ^(AM|PM)$
+    ...    msg=AM/PM field invalid: '${ampm}'
+    Log To Console    Found time field text: ${hours}:${minutes} ${ampm}
+
+a non-interactive field displays the current date
+    [Documentation]    1.5 Date & Time splits date across month/day/year under date_input (not 2.0 tvDate).
+    Wait Until Element Is Visible    ${SETTINGS_DATE}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_DATE_MONTH}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_DATE_DAY}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_DATE_YEAR}    ${DefaultTimeout}
+    ${month}=    Get Text    ${SETTINGS_DATE_MONTH}
+    ${day}=    Get Text    ${SETTINGS_DATE_DAY}
+    ${year}=    Get Text    ${SETTINGS_DATE_YEAR}
+    Should Match Regexp    ${month}    ^(0[1-9]|1[0-2])$
+    ...    msg=Month field invalid: '${month}'
+    Should Match Regexp    ${day}    ^(0[1-9]|[12][0-9]|3[01])$
+    ...    msg=Day field invalid: '${day}'
+    Should Match Regexp    ${year}    ^[0-9]{4}$
+    ...    msg=Year field invalid: '${year}'
+    Log To Console    Found date field text: ${month}/${day}/${year}
 
 Verify 'Show Caller ID' is not displayed on the screen
     ${status}=    Run Keyword And Return Status    Page Should Contain Element    ${SHOW_CALLER_ID_OPTION}
