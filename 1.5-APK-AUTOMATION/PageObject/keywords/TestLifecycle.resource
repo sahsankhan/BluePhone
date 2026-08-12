@@ -221,3 +221,29 @@ UI UX Test Setup
 UI UX Test Teardown
     Capture Failure Artifacts
     Run Keyword And Ignore Error    Navigate To Home Screen
+
+# --- Dial validation (keypad numbers + short call + Countly) ---
+
+Dial Validation Test Setup
+    Connecting to BLUphone
+    ${yaml_text}=    Get File    ${TEST_DATA_YAML_FILE}
+    ${yaml_data}=    Evaluate    yaml.safe_load($yaml_text)    modules=yaml
+    ${phone_numbers}=    Set Variable    ${yaml_data}[phone_numbers]
+    Should Not Be Empty    ${phone_numbers}    No phone numbers found in test data YAML.
+    ${full_count}=    Get Length    ${phone_numbers}
+    ${batch_size}=    Convert To Integer    ${DIAL_BATCH_SIZE}
+    IF    ${batch_size} > 0
+        ${phone_numbers}=    Get Slice From List    ${phone_numbers}    0    ${batch_size}
+        Log    Using DIAL_BATCH_SIZE=${batch_size} of ${full_count} numbers from YAML    INFO    console=True
+    ELSE
+        Log    Using full list of ${full_count} phone numbers from YAML    INFO    console=True
+    END
+    Set Suite Variable    ${PHONE_NUMBERS}    ${phone_numbers}
+    Log    Loaded ${phone_numbers.__len__()} phone numbers for this run    INFO    console=True
+    Load Countly Config and Test Data
+
+Dial Validation Test Teardown
+    Run Keyword And Ignore Error    Press Speaker Button If Active    udid=${UDID}
+    Run Keyword And Ignore Error    Close Post Call Review Screen
+    Run Keyword And Ignore Error    Navigate To Home Screen
+    Capture Failure Artifacts

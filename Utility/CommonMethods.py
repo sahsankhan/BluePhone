@@ -5,7 +5,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import *
@@ -16,6 +16,7 @@ from fuzzywuzzy import fuzz
 from robot.libraries.BuiltIn import BuiltIn
 import time
 import unicodedata
+import requests
 from appium.webdriver.common.mobileby import MobileBy as AppiumBy
 
 @library
@@ -710,3 +711,162 @@ class CommonMethods:
             raise
         except Exception as e:
             raise Exception(f"Failed to verify device display state: {e}") from e
+
+    @keyword
+    def press_speaker_button_if_active(self, udid: str = "") -> bool:
+        """
+        If speaker is the active communication device, press speaker (hang up) and return True.
+        1.5 Press Speaker Button requires udid.
+        """
+        try:
+            if not udid:
+                udid = BuiltIn().get_variable_value("${UDID}") or ""
+            adb_command = ["adb"]
+            if udid:
+                adb_command += ["-s", udid]
+            adb_command += ["shell", "dumpsys", "audio"]
+
+            result = subprocess.run(adb_command, capture_output=True, text=True)
+            if result.returncode != 0:
+                raise Exception(f"ADB command failed: {result.stderr.strip()}")
+
+            active_comm_line = ""
+            for line in result.stdout.splitlines():
+                if "Active communication device" in line:
+                    active_comm_line = line.strip()
+                    break
+
+            is_speaker_active = "type:speaker" in active_comm_line
+            logger.info(f"Speaker active: {is_speaker_active}", console=True)
+
+            if is_speaker_active:
+                self.press_speaker_button(udid)
+                return True
+            return False
+        except Exception as e:
+            raise Exception(f"Failed to check and press speaker button: {e}")
+
+    @keyword
+    def get_countly_event_data(self, base_url: str, api_key: str, app_id: str, uid: str, key: str, sg_field: str, expected_values: list, n: int) -> None:
+        """
+        Fetch Countly user_details, take the last N EventUserMakesCall (or given key) events,
+        and compare sg_field values against expected_values (dialled numbers).
+        """
+        base_url = base_url.strip().strip("'\"")
+        endpoint = f"{base_url}/o"
+
+        params = {
+            "method": "user_details",
+            "api_key": api_key,
+            "app_id": app_id,
+            "uid": uid,
+        }
+
+        print(f"Fetching Countly user_details from {endpoint} uid={uid} ...", flush=True)
+        response = requests.get(endpoint, params=params, timeout=30)
+        print(f"Countly HTTP {response.status_code} ({len(response.content)} bytes)", flush=True)
+        assert response.status_code == 200, f"Expected status 200 but got {response.status_code}"
+
+        data = response.json()
+
+        n = int(n)
+        if n != len(expected_values):
+            raise ValueError(
+                f"n={n} does not match the number of expected values provided ({len(expected_values)}). "
+                f"Please provide exactly {n} expected values."
+            )
+
+        events = data.get("events", [])
+        matched_events = [e for e in events if e.get("key") == key]
+
+        if not matched_events:
+            raise ValueError(f"No events found with key='{key}'")
+
+        available = len(matched_events)
+        fetch_count = min(n, available)
+        last_n_events = matched_events[-fetch_count:][::-1]
+
+        print(f"\n{'='*55}")
+        print(f"  Records Summary")
+        print(f"{'='*55}")
+        print(f"  Expected Records : {n}")
+        print(f"  Found in Countly : {available}")
+        print(f"  Skipped Records  : {n - fetch_count}")
+        print(f"{'='*55}\n")
+
+        last_event = last_n_events[0]
+        ts = last_event.get("ts")
+
+        if not ts:
+            raise ValueError("Most recent event does not contain a timestamp ('ts') field")
+
+        event_time = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+        current_time = datetime.now(tz=timezone.utc)
+        time_diff = abs(current_time - event_time)
+
+        print(f"{'='*55}")
+        print(f"  Timestamp Validation (Most Recent Event)")
+        print(f"{'='*55}")
+        print(f"  Event Time   : {event_time.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+        print(f"  Current Time : {current_time.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+        print(f"  Time Diff    : {int(time_diff.total_seconds())} seconds")
+
+        if time_diff > timedelta(minutes=2):
+            raise AssertionError(
+                f"Event time validation failed! "
+                f"Difference is {int(time_diff.total_seconds())} seconds, allowed maximum is 120 seconds."
+            )
+
+        print(f"  Time Check   : PASSED")
+        print(f"{'='*55}\n")
+
+        reversed_expected = list(reversed(expected_values))
+
+        print(f"{'='*55}")
+        print(f"  {sg_field} Verification ({fetch_count} countly records vs {n} expected)")
+        print(f"{'='*55}")
+
+        failures = []
+        exp_index = 0
+
+        for c_index, event in enumerate(last_n_events):
+            sg = event.get("sg", {})
+            sg_value = str(sg.get(sg_field, "NOT FOUND"))
+            label = "Last" if c_index == 0 else f"Last-{c_index}"
+
+            matched = False
+            skipped = []
+
+            while exp_index < len(reversed_expected):
+                expected_val = str(reversed_expected[exp_index])
+
+                if sg_value == expected_val:
+                    if skipped:
+                        for skipped_val in skipped:
+                            print(f"  {'':9}{'SKIPPED':<10} | Expected: {skipped_val:<15} | Got: {'(not in Countly)':<15} | SKIPPED")
+                            failures.append(f"Skipped: Expected '{skipped_val}' was not found in Countly records")
+                    print(f"  Record {c_index + 1} ({label:<8}) | Expected: {expected_val:<15} | Got: {sg_value:<15} | PASSED")
+                    exp_index += 1
+                    matched = True
+                    break
+                else:
+                    skipped.append(expected_val)
+                    exp_index += 1
+
+            if not matched:
+                print(f"  Record {c_index + 1} ({label:<8}) | Expected: {'(exhausted)':<15} | Got: {sg_value:<15} | FAILED")
+                failures.append(f"Record {c_index + 1} ({label}): Got '{sg_value}' but no matching expected value found")
+
+        while exp_index < len(reversed_expected):
+            remaining_val = str(reversed_expected[exp_index])
+            print(f"  {'':9}{'SKIPPED':<10} | Expected: {remaining_val:<15} | Got: {'(not in Countly)':<15} | SKIPPED")
+            failures.append(f"Skipped: Expected '{remaining_val}' was not found in Countly records")
+            exp_index += 1
+
+        print(f"{'='*55}\n")
+
+        if failures:
+            failure_summary = "\n".join(failures)
+            raise AssertionError(f"Verification completed with {len(failures)} issue(s):\n{failure_summary}")
+
+        print(f"All {fetch_count} records verified successfully")

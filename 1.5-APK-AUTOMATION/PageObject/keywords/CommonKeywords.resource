@@ -41,6 +41,7 @@ Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos.resource
 Resource   ${CURDIR}/../../PageObject/keywords/HelpVideos_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Display_Steps.resource
 Resource   ${CURDIR}/../../PageObject/keywords/Onboarding_Steps.resource
+Resource   ${CURDIR}/../../PageObject/keywords/Dial_Validation.resource
 
 *** Variables ***
 ${TEST_DATA_YAML_FILE}    ${CURDIR}/../../ConfigFiles/testdata.yaml
@@ -70,6 +71,7 @@ ${ACCOUNT_PASSWORD}    None
 ${COUNTLY_BASE_URL}        None
 ${COUNTLY_API_KEY}         None
 ${COUNTLY_APP_ID}          None
+${DIAL_BATCH_SIZE}         0
 
 *** Keywords ***
 
