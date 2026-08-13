@@ -29,3 +29,6 @@ ${CONTACT_ADD_NUMBER_ICON}      id=clrcap.CCClient:id/btn_add_field
 ${CONTACT_PHONE_TYPE_SPINNER}   id=clrcap.CCClient:id/spinner
 ${CONTACT_PHONE_TYPE_TEXT}      xpath=//*[@resource-id="clrcap.CCClient:id/spinner"]//*[@resource-id="android:id/text1"]
 ${CONTACT_PHONE_TYPE_COUNT}     //*[@resource-id="clrcap.CCClient:id/spinner"]//*[@resource-id="android:id/text1"]
+${CONTACT_CANCEL_CONFIRM_MSG}   id=clrcap.CCClient:id/tvMessage
+${CONTACT_CANCEL_YES_BTN}       xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btnYes"]
+${CONTACT_CANCEL_NO_BTN}        xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btnNo"]

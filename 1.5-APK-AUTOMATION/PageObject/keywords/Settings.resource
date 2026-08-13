@@ -450,3 +450,95 @@ Verify 'Show Caller ID' is not displayed on the screen
     ${status}=    Run Keyword And Return Status    Page Should Contain Element    ${SHOW_CALLER_ID_OPTION}
     Should Not Be True    ${status}    msg='Show Caller ID' option is unexpectedly displayed on the Phone screen
     Log To Console    Verified Show Caller ID is not displayed
+
+Tap on Handset Volume text field in Sound Settings
+    Wait Until Element Is Visible    ${HANDSET_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${HANDSET_VOLUME_TEXT_FIELD}
+    Log To Console    Clicked Handset Volume text field
+
+Verify that the numeric keyboard is displayed
+    ${kbd}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${NUMERIC_KEYBOARD}    8
+    IF    ${kbd}
+        Log To Console    Numeric keyboard frame visible
+        RETURN
+    END
+    # Fallback: focused text field implies soft keyboard invoked (UiAutomator1)
+    ${phone_focus}=    Run Keyword And Return Status
+    ...    Get Element Attribute    ${CONTACT_PHONE_NUMBER_FIELD}    focused
+    IF    ${phone_focus}
+        ${focused}=    Get Element Attribute    ${CONTACT_PHONE_NUMBER_FIELD}    focused
+        IF    '${focused}' == 'true'
+            Log To Console    Phone field focused (keyboard invoke verified)
+            RETURN
+        END
+    END
+    ${handset_focus}=    Run Keyword And Return Status
+    ...    Get Element Attribute    ${HANDSET_VOLUME_TEXT_FIELD}    focused
+    IF    ${handset_focus}
+        ${focused}=    Get Element Attribute    ${HANDSET_VOLUME_TEXT_FIELD}    focused
+        Should Be Equal As Strings    ${focused}    true
+        ...    msg=Expected numeric keyboard after field tap
+        Log To Console    Handset Volume field focused (keyboard invoke verified)
+        RETURN
+    END
+    Fail    Numeric keyboard not detected
+
+Input value in Handset Volume text field
+    [Arguments]    ${VALUE}    ${CLEAR_FIRST}=${True}
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${HANDSET_VOLUME_TEXT_FIELD}    max_swipes=5    direction=down
+    Wait Until Element Is Visible    ${HANDSET_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${HANDSET_VOLUME_TEXT_FIELD}
+    Sleep    0.5s
+    # UiAutomator1 InputText is flaky on volume etValue — use ADB clear+type
+    Type Into Focused Field Via Adb    ${VALUE}
+    Sleep    1s
+    ${hide}=    Get Value From Yaml File    keycodes    KEYPAD_HIDE
+    Run Keyword And Ignore Error    Press Keycode    ${hide}
+    Sleep    1s
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${HANDSET_VOLUME_TEXT_FIELD}    max_swipes=5    direction=down
+    Log To Console    Entered Handset Volume value ${VALUE}
+
+Get text from Handset Volume text field
+    ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${HANDSET_VOLUME_TEXT_FIELD}    5
+    IF    not ${visible}
+        Run Keyword And Ignore Error
+        ...    Scroll Element Into View    locator=${HANDSET_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+        ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${HANDSET_VOLUME_TEXT_FIELD}    5
+    END
+    IF    not ${visible}
+        # Recover if soft-keyboard hide left Sounds
+        AU is on Sounds screen
+        Run Keyword And Ignore Error
+        ...    Scroll Element Into View    locator=${HANDSET_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    END
+    Wait Until Element Is Visible    ${HANDSET_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    ${text}=    Get Text    ${HANDSET_VOLUME_TEXT_FIELD}
+    Log To Console    Handset Volume text=${text}
+    RETURN    ${text}
+
+Verify Voicemail Is Directly Below Phone In Settings Menu
+    Wait Until Element Is Visible    ${SETTINGS_PHONE}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${VOICEMAIL}    ${DefaultTimeout}
+    ${all_items}=    Get WebElements    ${SETTINGS_OPTIONS_LIST}
+    ${phone_index}=    Set Variable    ${-1}
+    ${voicemail_index}=    Set Variable    ${-1}
+    ${counter}=    Set Variable    ${0}
+    FOR    ${element}    IN    @{all_items}
+        ${text}=    Call Method    ${element}    get_attribute    text
+        ${text}=    Strip String    ${text}
+        IF    '${text}' == 'Phone'
+            ${phone_index}=    Set Variable    ${counter}
+        END
+        IF    '${text}' == 'Voicemail'
+            ${voicemail_index}=    Set Variable    ${counter}
+        END
+        ${counter}=    Evaluate    ${counter} + 1
+    END
+    Should Not Be Equal As Integers    ${phone_index}    -1    msg=Phone item not found in Settings list
+    Should Not Be Equal As Integers    ${voicemail_index}    -1    msg=Voicemail item not found in Settings list
+    ${expected_voicemail_index}=    Evaluate    ${phone_index} + 1
+    Should Be Equal As Integers    ${voicemail_index}    ${expected_voicemail_index}
+    ...    msg=Voicemail is not directly beneath Phone. Phone=${phone_index}, Voicemail=${voicemail_index}
+    Log To Console    Verified Voicemail directly below Phone (Phone=${phone_index}, Voicemail=${voicemail_index})

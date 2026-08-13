@@ -15,6 +15,9 @@ the user is registered in Blue phone
 User is registered in Blue phone
     the user is registered in Blue phone
 
+the user is registered in the Blue phone
+    the user is registered in Blue phone
+
 the AU goes to the Contacts screen
     Open Contacts List Screen
 

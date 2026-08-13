@@ -247,3 +247,105 @@ If the user has not entered at least one character in a field and hits Cancel, t
     Should Not Be True    ${still_on_form}
     ...    msg=Cancel with empty form should leave New Contact and return to contacts list
     Log To Console    Cancel with empty form returned to contacts list
+
+the user can choose phone type options: Mobile, Work, Home, and Other
+    Verify Phone Type Options
+
+Verify Phone Type Options
+    Wait Until Element Is Visible    ${CONTACT_PHONE_TYPE_SPINNER}    ${DefaultTimeout}
+    Click Element    ${CONTACT_PHONE_TYPE_SPINNER}
+    Wait Until Element Is Visible    ${DROPDOWN_MOBILE}    ${DefaultTimeout}
+    Element Should Be Visible    ${DROPDOWN_WORK}
+    Element Should Be Visible    ${DROPDOWN_HOME}
+    Element Should Be Visible    ${DROPDOWN_OTHER}
+    Log To Console    Phone type options Mobile/Work/Home/Other verified
+    # Close spinner without changing selection
+    Run Keyword And Ignore Error    Press Keycode    4
+    Sleep    1s
+
+the cursor is active in the First Name field by default
+    verify element is focused    ${CONTACT_FIRST_NAME_FIELD}
+
+verify element is focused
+    [Arguments]    ${locator}
+    Wait Until Element Is Visible    ${locator}    ${DefaultTimeout}
+    ${focus_status}=    Get Element Attribute    ${locator}    focused
+    Log To Console    Element focus status: ${focus_status}
+    Should Be Equal As Strings    ${focus_status}    true
+    ...    msg=Expected cursor active in First Name field, focused=${focus_status}
+
+the AU has a saved contact
+    there is a saved contact with an associated phone number
+
+the user is on the contact details screen
+    Open Test Contact Detail From Contacts List
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_SAVED_PHONE_NUMBER}
+
+a Home button should be present at the bottom of the screen
+    Wait Until Element Is Visible    ${CONTACT_HOME_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HOME_BTN}
+    Log To Console    Contact detail Home button visible
+
+an Edit button should be present at the bottom of the screen
+    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_EDIT_BTN}
+    Log To Console    Contact detail Edit button visible
+
+AU taps on Contacts from home screen open contact screen
+    the user is adding a contact
+
+AU taps on Contacts from home screen
+    Open Contacts List Screen
+
+AU taps on the ADD '+' icon create a contact icon
+    Tap Add Contact Button
+
+Open Add Contact Screen
+    the user is adding a contact
+
+AU enters at least one character in a field
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    # Unique name so leftover contacts from other UI_UX cases do not false-match cancel-Yes checks
+    ${first}=    Set Variable    ZzCancelOnly
+    Set Test Variable    ${CANCEL_TEST_FIRST_NAME}    ${first}
+    Input Text    ${CONTACT_FIRST_NAME_FIELD}    ${first}
+    Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    ${DefaultTimeout}
+    ${phone}=    Get Value From Yaml File    user    phoneNumber
+    Input Text    ${CONTACT_PHONE_NUMBER_FIELD}    ${phone}
+    Log To Console    Entered first name and phone on New Contact
+
+AU taps on CANCEL button
+    the AU taps on CANCEL button
+
+The confirmation overlay appears asking Would you like to leave this page without saving your changes along with a Yes and No button
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    leave this page without saving
+    ...    msg=Unexpected cancel overlay message: ${msg}
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Log To Console    Cancel confirmation overlay with Yes/No verified
+
+AU selects YES option
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_YES_BTN}
+    Log To Console    Selected YES on cancel confirmation
+
+From the cancel confirmation overlay if the user hits Yes the contacts list appears and the new contact is NOT displayed in the contacts list
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    ${first}=    Set Variable    ${CANCEL_TEST_FIRST_NAME}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${first}
+    Sleep    2s
+    ${found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    5
+    Should Not Be True    ${found}
+    ...    msg=Contact '${first}' should NOT appear after cancel Yes
+    Log To Console    Verified cancelled contact '${first}' is not in list
+
+focus is placed in the phone number field
+    Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    ${DefaultTimeout}
+    Click Element    ${CONTACT_PHONE_NUMBER_FIELD}
+    Log To Console    Focused phone number field

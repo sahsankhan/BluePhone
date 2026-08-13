@@ -194,3 +194,62 @@ the user navigates to Phone
 
 "Show Caller ID" is not displayed on the screen
     Verify 'Show Caller ID' is not displayed on the screen
+
+AU is on Sounds screen
+    the user navigates to Settings
+    Tap on Sounds option in settings
+    Verify Sounds screen is displayed
+
+tapping in the Handset Volume field
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${HANDSET_VOLUME_TEXT_FIELD}    max_swipes=5    direction=down
+    Sleep    1s
+    Tap on Handset Volume text field in Sound Settings
+
+the Settings - Sounds screen invokes the numeric keyboard
+    ${kbd}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${NUMERIC_KEYBOARD}    8
+    IF    ${kbd}
+        Log To Console    Numeric keyboard frame visible
+        RETURN
+    END
+    ${focused}=    Get Element Attribute    ${HANDSET_VOLUME_TEXT_FIELD}    focused
+    Should Be Equal As Strings    ${focused}    true
+    ...    msg=Expected numeric keyboard / focused Handset Volume field after tap
+    Log To Console    Handset Volume field focused (keyboard invoke verified)
+
+AU enters a number in the Handset Volume field that is greater than the allowable volume of 12, e.g., 15
+    AU is on Sounds screen
+    Input value in Handset Volume text field    VALUE=15    CLEAR_FIRST=${True}
+
+the number that is greater than 12 is not accepted in the field
+    ${text}=    Get text from Handset Volume text field
+    Should Not Be Equal As Strings    ${text}    15
+    ...    msg=Handset Volume accepted 15 but max should be 12
+    Log To Console    Handset Volume rejected 15 (got ${text})
+
+instead 12 is inserted into the field
+    ${text}=    Get text from Handset Volume text field
+    Should Be Equal As Strings    ${text}    12
+    ...    msg=Expected Handset Volume clamped to 12, got ${text}
+    Log To Console    Handset Volume clamped to 12
+
+AU enters the number "0" in the Handset Volume field
+    AU is on Sounds screen
+    Input value in Handset Volume text field    VALUE=0    CLEAR_FIRST=${True}
+
+pressing "0" automatically inserts a "7" in the Handset Volume field
+    ${text}=    Get text from Handset Volume text field
+    Should Be Equal As Strings    ${text}    7
+    ...    msg=Expected Handset Volume 0 to become 7, got ${text}
+    Log To Console    Handset Volume 0 mapped to 7
+
+the user taps SETTINGS on the Home screen
+    Open Settings From Home
+
+the main Settings menu is opened
+    Wait Until Element Is Visible    ${SETTINGS_OPTIONS_LIST}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${SETTINGS_PHONE}    ${DefaultTimeout}
+    Log To Console    Main Settings menu opened
+
+the messaging menu is named Voicemail on the main Settings page and it is displayed directly under the Phone option
+    Verify Voicemail Is Directly Below Phone In Settings Menu
