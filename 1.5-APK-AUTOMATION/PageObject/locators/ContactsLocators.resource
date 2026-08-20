@@ -32,3 +32,6 @@ ${CONTACT_PHONE_TYPE_COUNT}     //*[@resource-id="clrcap.CCClient:id/spinner"]//
 ${CONTACT_CANCEL_CONFIRM_MSG}   id=clrcap.CCClient:id/tvMessage
 ${CONTACT_CANCEL_YES_BTN}       xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btnYes"]
 ${CONTACT_CANCEL_NO_BTN}        xpath=//android.widget.Button[@resource-id="clrcap.CCClient:id/btnNo"]
+${CONTACT_EDIT_HEADER}          xpath=//android.widget.TextView[@resource-id="clrcap.CCClient:id/tv_toolbar_title" and @text="EDIT CONTACT"]
+${CONTACT_SEARCH_HEADER_CLOSE}  id=clrcap.CCClient:id/ib_toolbar_cancel
+${CONTACT_DELETE_CONFIRM_MSG}   id=clrcap.CCClient:id/tvMessage

@@ -542,3 +542,8 @@ Verify Voicemail Is Directly Below Phone In Settings Menu
     Should Be Equal As Integers    ${voicemail_index}    ${expected_voicemail_index}
     ...    msg=Voicemail is not directly beneath Phone. Phone=${phone_index}, Voicemail=${voicemail_index}
     Log To Console    Verified Voicemail directly below Phone (Phone=${phone_index}, Voicemail=${voicemail_index})
+
+Tap on Speakerphone Volume text field in Sound Settings
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Log To Console    Clicked Speakerphone Volume text field

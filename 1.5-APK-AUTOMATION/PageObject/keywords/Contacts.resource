@@ -349,3 +349,181 @@ focus is placed in the phone number field
     Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    ${DefaultTimeout}
     Click Element    ${CONTACT_PHONE_NUMBER_FIELD}
     Log To Console    Focused phone number field
+
+AU selects NO option
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_NO_BTN}
+    Log To Console    Selected NO on cancel confirmation
+
+From the cancel confirmation overlay if the user hits No the create contact screen remains with all information unchanged
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    ${first}=    Get Text    ${CONTACT_FIRST_NAME_FIELD}
+    Should Be Equal As Strings    ${first}    ${CANCEL_TEST_FIRST_NAME}
+    ...    msg=After Cancel No expected first name '${CANCEL_TEST_FIRST_NAME}' but got '${first}'
+    ${phone_ui}=    Get Text    ${CONTACT_PHONE_NUMBER_FIELD}
+    ${phone_plain}=    Convert To Plain Number    ${phone_ui}
+    ${expected_phone}=    Get Value From Yaml File    user    phoneNumber
+    Should Be Equal As Strings    ${phone_plain}    ${expected_phone}
+    ...    msg=After Cancel No expected phone '${expected_phone}' but got '${phone_plain}'
+    Log To Console    Cancel No kept New Contact data unchanged
+
+the AU is on the Edit Contact screen
+    ${on_edit}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_EDIT_HEADER}    3
+    IF    ${on_edit}
+        Capture Expected Edit Contact Names
+        RETURN
+    END
+    ${on_detail}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    5
+    IF    not ${on_detail}
+        Open Test Contact Detail From Contacts List
+    END
+    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_EDIT_BTN}
+    Wait Until Element Is Visible    ${CONTACT_EDIT_HEADER}    ${DefaultTimeout}
+    Capture Expected Edit Contact Names
+    Log To Console    On Edit Contact screen
+
+Capture Expected Edit Contact Names
+    ${first}=    Get Value From Yaml File    user    createContactFirstName
+    ${last}=    Get Value From Yaml File    user    createContactLastName
+    Set Test Variable    ${EXPECTED_FIRST}    ${first}
+    Set Test Variable    ${EXPECTED_LAST}    ${last}
+    ${ui_first}=    Get Text    ${CONTACT_FIRST_NAME_FIELD}
+    ${ui_last}=    Get Text    ${CONTACT_LAST_NAME_FIELD}
+    Set Test Variable    ${EXPECTED_FIRST}    ${ui_first}
+    Set Test Variable    ${EXPECTED_LAST}    ${ui_last}
+
+the AU taps the Delete button
+    Wait Until Element Is Visible    ${CONTACT_DELETE_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_DELETE_BTN}
+    Log To Console    Tapped Delete on Edit Contact
+
+the delete confirmation overlay appears
+    Wait Until Element Is Visible    ${CONTACT_DELETE_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_DELETE_CONFIRM_MSG}
+    Should Contain    ${msg}    delete this contact
+    ...    msg=Unexpected delete overlay message: ${msg}
+    Log To Console    Delete confirmation overlay visible
+
+the overlay contains "Yes" and "No" buttons
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Log To Console    Delete overlay Yes/No verified
+
+the AU selects "No"
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_NO_BTN}
+    Log To Console    Selected NO on delete confirmation
+
+the Edit Contact screen remains open
+    Wait Until Element Is Visible    ${CONTACT_EDIT_HEADER}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_EDIT_HEADER}
+    Log To Console    Still on Edit Contact
+
+all contact information remains unchanged
+    ${current_first}=    Get Text    ${CONTACT_FIRST_NAME_FIELD}
+    ${current_last}=    Get Text    ${CONTACT_LAST_NAME_FIELD}
+    Should Be Equal As Strings    ${current_first}    ${EXPECTED_FIRST}
+    ...    msg=First name changed after Delete No: expected '${EXPECTED_FIRST}' got '${current_first}'
+    Should Be Equal As Strings    ${current_last}    ${EXPECTED_LAST}
+    ...    msg=Last name changed after Delete No: expected '${EXPECTED_LAST}' got '${current_last}'
+    Log To Console    Contact fields unchanged after Delete No
+
+the AU taps on saved Contacts from the home screen
+    Open Test Contact Detail From Contacts List
+
+AU taps on Edit icon
+    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_EDIT_BTN}
+    Wait Until Element Is Visible    ${CONTACT_EDIT_HEADER}    ${DefaultTimeout}
+    Capture Expected Edit Contact Names
+    Log To Console    Tapped Edit icon
+
+The edit contact header displays the head icon and "Edit Contact" text, plus a Delete button
+    Wait Until Element Is Visible    ${CONTACT_EDIT_HEADER}    ${DefaultTimeout}
+    ${title}=    Get Text    ${CONTACT_LIST_TITLE}
+    Should Be Equal As Strings    ${title}    EDIT CONTACT
+    ...    msg=Expected EDIT CONTACT header but got '${title}'
+    Wait Until Element Is Visible    ${CONTACT_HEADER_ICON}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_DELETE_BTN}    ${DefaultTimeout}
+    Log To Console    Edit Contact header icon + title + Delete verified
+
+AU taps on ADD NUMBER button
+    ${add_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    5
+    IF    ${add_visible}
+        Click Element    ${CONTACT_ADD_NUMBER_BTN}
+    ELSE
+        Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    ${DefaultTimeout}
+        Click Element    ${CONTACT_ADD_NUMBER_ICON}
+    END
+    Sleep    1s
+    Log To Console    Tapped ADD NUMBER on Edit Contact
+
+The edit contact screen displays an Add Number button if there are fewer than 10 saved phone numbers
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${count} < 10
+    ...    msg=Expected fewer than 10 phone fields before asserting Add Number, found ${count}
+    ${add_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    5
+    IF    not ${add_visible}
+        Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    ${DefaultTimeout}
+    END
+    Log To Console    Add Number still available with ${count} phone field(s)
+
+the AU is on the Contacts screen
+    Open Contacts List Screen
+
+the Search field is empty
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    ${text}=    Get Text    ${CONTACT_SEARCH_BAR}
+    ${empty}=    Run Keyword And Return Status    Should Be Empty    ${text}
+    IF    ${empty}
+        Log To Console    Contacts Search field empty
+        RETURN
+    END
+    ${lower}=    Convert To Lower Case    ${text}
+    Should Contain    ${lower}    looking
+    ...    msg=Expected empty/placeholder Search field, got '${text}'
+    Log To Console    Contacts Search placeholder OK (${text})
+
+the AU taps in the Search field
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Sleep    1s
+    Log To Console    Tapped Contacts Search field
+
+the header should display a magnifying glass icon
+    Wait Until Element Is Visible    ${CONTACT_HEADER_ICON}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HEADER_ICON}
+    Log To Console    Search header magnifying glass icon visible
+
+the header should display the text "SEARCH"
+    Wait Until Element Is Visible    ${CONTACT_LIST_TITLE}    ${DefaultTimeout}
+    ${title}=    Get Text    ${CONTACT_LIST_TITLE}
+    Should Be Equal As Strings    ${title}    SEARCH
+    ...    msg=Expected SEARCH header but got '${title}'
+    Log To Console    Search header title verified
+
+the header should display a CLOSE button
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_HEADER_CLOSE}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_SEARCH_HEADER_CLOSE}
+    Log To Console    Search header CLOSE verified
+
+the user hits the x button next to any phone number field
+    Open Contacts List Screen
+    Tap Add Contact Button
+    Wait Until Element Is Visible    ${CONTACT_REMOVE_NUMBER_ICON}    ${DefaultTimeout}
+    ${before}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Set Test Variable    ${PHONE_FIELDS_BEFORE_REMOVE}    ${before}
+    Click Element    ${CONTACT_REMOVE_NUMBER_ICON}
+    Sleep    1s
+    Log To Console    Tapped red X on phone number row
+
+the entire row field and red x button is removed
+    ${after}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${after} < ${PHONE_FIELDS_BEFORE_REMOVE}
+    ...    msg=Expected phone row removed (before=${PHONE_FIELDS_BEFORE_REMOVE}, after=${after})
+    ${phone_gone}=    Run Keyword And Return Status
+    ...    Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    2
+    Should Not Be True    ${phone_gone}
+    ...    msg=Phone number field still visible after tapping red X
+    Log To Console    Phone row and red X removed
