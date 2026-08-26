@@ -527,3 +527,168 @@ the entire row field and red x button is removed
     Should Not Be True    ${phone_gone}
     ...    msg=Phone number field still visible after tapping red X
     Log To Console    Phone row and red X removed
+
+the AU is redirected to the Contacts list
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Log To Console    Redirected to Contacts list after delete Yes
+
+the deleted contact is no longer displayed in the Contacts list
+    ${first}=    Set Variable    ${EXPECTED_FIRST}
+    ${last}=    Set Variable    ${EXPECTED_LAST}
+    ${full_name}=    Set Variable    ${first} ${last}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${full_name}
+    Sleep    2s
+    ${found}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    5
+    Should Not Be True    ${found}
+    ...    msg=Deleted contact '${full_name}' should NOT appear in Contacts list
+    Log To Console    Verified deleted contact '${full_name}' is gone
+    Clear Contacts Search Field
+
+the AU starts typing in the Search field
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    Te
+    Sleep    1s
+    Log To Console    Typed in Contacts Search field
+
+the magnifying glass icon should change to an [x] button
+    Wait Until Element Is Visible    ${CONTACT_CLEAR_SEARCH_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_CLEAR_SEARCH_BTN}
+    Log To Console    Search clear [x] button visible after typing
+
+the [x] button is displayed
+    Wait Until Element Is Visible    ${CONTACT_CLEAR_SEARCH_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_CLEAR_SEARCH_BTN}
+    Log To Console    Search [x] button displayed
+
+Tap on Close button in the header
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_HEADER_CLOSE}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_HEADER_CLOSE}
+    Sleep    1s
+    Log To Console    Tapped search header CLOSE
+
+the AU clears all text in the Search field
+    Wait Until Element Is Visible    ${CONTACT_CLEAR_SEARCH_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CLEAR_SEARCH_BTN}
+    Sleep    1s
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    # Lose focus so search chrome can restore magnifier
+    Run Keyword And Ignore Error    Click Element    ${CONTACT_LIST_TITLE}
+    Sleep    1s
+    Log To Console    Cleared Contacts Search field via [x]
+
+the [x] button should change back to the magnifying glass icon
+    ${text}=    Get Text    ${CONTACT_SEARCH_BAR}
+    ${empty}=    Run Keyword And Return Status    Should Be Empty    ${text}
+    IF    not ${empty}
+        ${lower}=    Convert To Lower Case    ${text}
+        Should Contain    ${lower}    looking
+        ...    msg=Expected empty/placeholder Search after clear, got '${text}'
+    END
+    Wait Until Element Is Visible    ${CONTACT_HEADER_ICON}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HEADER_ICON}
+    # 1.5 can keep ib_clear in the tree after clear; magnifier + empty/placeholder is the success signal
+    Log To Console    Magnifying glass restored after clear (search='${text}')
+
+AU enters only a first name, or only a last name, or with a phone number and first and last names both
+    Create Contact By First Name Only    ZzFirstOnly
+    Tap Add Contact Button
+    Create Contact By Last Name Only    ZzLastOnly
+    Tap Add Contact Button
+    ${phone}=    Get Value From Yaml File    user    createContactPhoneNumber
+    Create Contact By Phone Number Only    ${phone}
+    Set Test Variable    ${MIN_REQ_PHONE}    ${phone}
+    Log To Console    Created min-requirement contacts (first/last/phone)
+
+The new contact can be saved with only a first name, or only a last name, or with a phone number and first and last names both
+    Verify Contact Displayed In Contacts List By Search    ZzFirstOnly
+    Clear Contacts Search Field
+    Verify Contact Displayed In Contacts List By Search    ZzLastOnly
+    Clear Contacts Search Field
+    Verify Contact Displayed In Contacts List By Search    ${MIN_REQ_PHONE}
+    Clear Contacts Search Field
+    Log To Console    Min-requirement contacts verified in list
+    Run Keyword And Ignore Error    Delete Contact By Search Name    ZzFirstOnly
+    Run Keyword And Ignore Error    Delete Contact By Search Name    ZzLastOnly
+    Run Keyword And Ignore Error    Delete Contact By Search Name    ${MIN_REQ_PHONE}
+
+Create Contact By First Name Only
+    [Arguments]    ${first_name}
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    Input Text    ${CONTACT_FIRST_NAME_FIELD}    ${first_name}
+    SAVE is selected
+    Return To Contacts List After Save
+    Log To Console    Saved contact with first name only: ${first_name}
+
+Create Contact By Last Name Only
+    [Arguments]    ${last_name}
+    Wait Until Element Is Visible    ${CONTACT_LAST_NAME_FIELD}    ${DefaultTimeout}
+    Input Text    ${CONTACT_LAST_NAME_FIELD}    ${last_name}
+    SAVE is selected
+    Return To Contacts List After Save
+    Log To Console    Saved contact with last name only: ${last_name}
+
+Create Contact By Phone Number Only
+    [Arguments]    ${phone_number}
+    Wait Until Element Is Visible    ${CONTACT_PHONE_NUMBER_FIELD}    ${DefaultTimeout}
+    Input Text    ${CONTACT_PHONE_NUMBER_FIELD}    ${phone_number}
+    SAVE is selected
+    Return To Contacts List After Save
+    Log To Console    Saved contact with phone only: ${phone_number}
+
+Return To Contacts List After Save
+    ${on_list}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    8
+    IF    ${on_list}
+        RETURN
+    END
+    ${on_detail}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    5
+    IF    ${on_detail}
+        ${back}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_TOOLBAR_BACK}    3
+        IF    ${back}
+            Click Element    ${CONTACT_TOOLBAR_BACK}
+        ELSE
+            Run Keyword And Ignore Error    Click Element    ${CONTACT_HOME_BTN}
+        END
+        Sleep    1s
+    END
+    ${on_list}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    8
+    IF    not ${on_list}
+        Open Contacts List Screen
+    END
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+
+Verify Contact Displayed In Contacts List By Search
+    [Arguments]    ${search_text}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${search_text}
+    Sleep    2s
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_NAME_IN_LIST}
+    Log To Console    Found contact for search '${search_text}'
+
+Delete Contact By Search Name
+    [Arguments]    ${search_text}
+    Open Contacts List Screen
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${search_text}
+    Sleep    2s
+    ${present}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    5
+    Return From Keyword If    not ${present}
+    Click Element    ${CONTACT_NAME_IN_LIST}
+    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_EDIT_BTN}
+    Wait Until Element Is Visible    ${CONTACT_DELETE_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_DELETE_BTN}
+    Wait Until Element Is Visible    ${CONTACT_DELETE_YES_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_DELETE_YES_BTN}
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    Clear Contacts Search Field
+    Log To Console    Cleaned up contact '${search_text}'

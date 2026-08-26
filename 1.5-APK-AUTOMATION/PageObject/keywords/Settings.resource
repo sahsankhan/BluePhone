@@ -547,3 +547,34 @@ Tap on Speakerphone Volume text field in Sound Settings
     Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
     Click Element    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
     Log To Console    Clicked Speakerphone Volume text field
+
+Input value in Speakerphone Volume text field
+    [Arguments]    ${VALUE}    ${CLEAR_FIRST}=${True}
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Sleep    0.5s
+    Type Into Focused Field Via Adb    ${VALUE}
+    Sleep    1s
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    Log To Console    Entered Speakerphone Volume value ${VALUE}
+
+Get text from Speakerphone Volume text field
+    ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    5
+    IF    not ${visible}
+        Run Keyword And Ignore Error
+        ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+        ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    5
+    END
+    IF    not ${visible}
+        Navigate To Home Screen
+        AU is on Sounds screen
+        Run Keyword And Ignore Error
+        ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    END
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    ${text}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Log To Console    Speakerphone Volume text=${text}
+    RETURN    ${text}

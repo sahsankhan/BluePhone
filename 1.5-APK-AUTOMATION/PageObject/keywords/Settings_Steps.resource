@@ -305,3 +305,45 @@ only numbers can be entered in the field
     Should Match Regexp    ${text}    ^\\d+$
     ...    msg=Handset Volume should remain numeric, got '${text}'
     Log To Console    Handset Volume remains numeric after adjust (${text})
+
+using the numeric keyboard, AU enters the number "0" in the Speakerphone Volume field
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    Input value in Speakerphone Volume text field    VALUE=0    CLEAR_FIRST=${True}
+
+pressing "0" automatically inserts a "7" in the Speakerphone Volume field
+    ${text}=    Get text from Speakerphone Volume text field
+    Should Be Equal As Strings    ${text}    7
+    ...    msg=Expected Speakerphone Volume 0 to become 7, got ${text}
+    Log To Console    Speakerphone Volume 0 mapped to 7
+
+using the numeric keyboard, AU enters special characters into the Speakerphone Volume field
+    Navigate To Home Screen
+    AU is on Sounds screen
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Sleep    0.5s
+    ${before}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Set Test Variable    ${SPEAKERPHONE_VOLUME_BEFORE_SPECIAL}    ${before}
+    ${at_sign}=    Get Value From Yaml File    keycodes    KEY_EVENT_AT_SIGN
+    Run Keyword And Ignore Error    Press Keycode    ${at_sign}
+    Sleep    1s
+    ${after_special}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Set Test Variable    ${SPEAKERPHONE_VOLUME_AFTER_SPECIAL}    ${after_special}
+    Log To Console    Speakerphone Volume before=${before} after_special=${after_special}
+
+special characters are not entered into the Speakerphone Volume field
+    Should Match Regexp    ${SPEAKERPHONE_VOLUME_AFTER_SPECIAL}    ^\\d+$
+    ...    msg=Speakerphone Volume accepted non-numeric characters: '${SPEAKERPHONE_VOLUME_AFTER_SPECIAL}'
+    Log To Console    Speakerphone Volume rejected special chars (value=${SPEAKERPHONE_VOLUME_AFTER_SPECIAL})
+
+only numbers can be entered
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+    Click Element    ${SPEAKERPHONE_VOLUME_RIGHT_ARROW}
+    Sleep    1s
+    ${text}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Should Match Regexp    ${text}    ^\\d+$
+    ...    msg=Speakerphone Volume should remain numeric, got '${text}'
+    Log To Console    Speakerphone Volume remains numeric after adjust (${text})
