@@ -692,3 +692,66 @@ Delete Contact By Search Name
     Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
     Clear Contacts Search Field
     Log To Console    Cleaned up contact '${search_text}'
+
+Verify Scrollbar Not Visible On New Contact Screen
+    Wait Until Page Does Not Contain Element    ${CONTACT_SCROLL_BAR}    ${DefaultTimeout}
+    Log To Console    Scrollbar not visible on New Contact screen
+
+the user taps the back arrow
+    Wait Until Element Is Visible    ${CONTACT_TOOLBAR_BACK}    ${DefaultTimeout}
+    Click Element    ${CONTACT_TOOLBAR_BACK}
+    Log To Console    Tapped back arrow on contact detail
+
+the user is returned to the contacts list
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_ADD_BUTTON}
+    Log To Console    Returned to contacts list
+
+the user taps the home button
+    Wait Until Element Is Visible    ${CONTACT_HOME_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_HOME_BTN}
+    Log To Console    Tapped Home button from contacts
+
+Create Avatar Test Contact
+    [Arguments]    ${first_name}    ${last_name}=${EMPTY}    ${phone_number}=${DID_1}
+    Open Contacts List Screen
+    Tap Add Contact Button
+    Click Element    ${CONTACT_FIRST_NAME_FIELD}
+    Input Text    ${CONTACT_FIRST_NAME_FIELD}    ${first_name}
+    IF    '${last_name}' != '${EMPTY}'
+        Click Element    ${CONTACT_LAST_NAME_FIELD}
+        Input Text    ${CONTACT_LAST_NAME_FIELD}    ${last_name}
+    END
+    Click Element    ${CONTACT_PHONE_NUMBER_FIELD}
+    Input Text    ${CONTACT_PHONE_NUMBER_FIELD}    ${phone_number}
+    SAVE is selected
+    Return To Contacts List After Save
+    Log To Console    Created avatar test contact ${first_name} ${last_name}
+
+Verify Contact Avatar Initials
+    [Arguments]    ${full_name}
+    ${name_parts}=    Split String    ${full_name}
+    ${part_count}=    Get Length    ${name_parts}
+    IF    ${part_count} == 1
+        ${first_name}=    Get From List    ${name_parts}    0
+        ${first_initial}=    Get Substring    ${first_name}    0    1
+        ${expected_initials}=    Convert To Upper Case    ${first_initial}
+    ELSE
+        ${first_name}=    Get From List    ${name_parts}    0
+        ${last_name}=    Get From List    ${name_parts}    1
+        ${first_initial}=    Get Substring    ${first_name}    0    1
+        ${last_initial}=    Get Substring    ${last_name}    0    1
+        ${expected_initials}=    Convert To Upper Case    ${first_initial}${last_initial}
+    END
+    Verify Contact Displayed In Contacts List By Search    ${full_name}
+    Wait Until Element Is Visible    ${CONTACT_AVATAR_INITIALS}    ${DefaultTimeout}
+    ${avatar_text}=    Get Text    ${CONTACT_AVATAR_INITIALS}
+    ${actual_initials}=    Strip String    ${avatar_text}
+    Should Be Equal As Strings    ${expected_initials}    ${actual_initials}
+    ...    msg=Avatar initials mismatch for '${full_name}': expected '${expected_initials}' got '${actual_initials}'
+    Log To Console    Avatar initials verified: ${actual_initials} for ${full_name}
+
+Verify Contact Initials Are Present In List
+    Wait Until Element Is Visible    ${CONTACT_AVATAR_INITIALS}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_AVATAR_INITIALS}
+    Log To Console    Contact avatar initials element visible in list

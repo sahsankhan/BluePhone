@@ -91,3 +91,21 @@ the New Contact screen displays the First Name and Last Name fields
 
 a single Phone Number field is displayed with a red [X] button next to it
     Verify Single Phone Field With Remove Icon
+
+the scrollbar is not visible by default on the new contact screen
+    Verify Scrollbar Not Visible On New Contact Screen
+
+all contacts display the initials of the contact name within the avatar image
+    Create Avatar Test Contact    IniTest    User1
+    Verify Contact Initials Are Present In List
+    Delete Contact By Search Name    IniTest
+
+one letter should be displayed if only a first or last name is entered
+    Create Avatar Test Contact    IniTest
+    Verify Contact Avatar Initials    IniTest
+    Delete Contact By Search Name    IniTest
+
+two letters should be displayed if both a first and last name are entered
+    Create Avatar Test Contact    IniTest    User1
+    Verify Contact Avatar Initials    IniTest User1
+    Delete Contact By Search Name    IniTest

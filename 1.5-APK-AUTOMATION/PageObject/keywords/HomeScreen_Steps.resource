@@ -18,6 +18,15 @@ the Blue device is on the Home screen
 the user is taken to the main screen
     the user is on the home screen
 
+the phone is connected to the ClearCaptions VOIP service
+    Wait Until Element Is Visible    ${DEVICE_NUMBER}    ${DefaultTimeout}
+    Log To Console    Device registered — VOIP service connected
+
+the "CC" icon should appear in the header to indicate VOIP connectivity
+    Wait Until Element Is Visible    ${CC_ICON}    ${DefaultTimeout}
+    Element Should Be Visible    ${CC_ICON}
+    Log To Console    CC icon visible in header (VOIP indicator)
+
 the Call Log App should be displayed
     ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CALL_LOG_APP}    5
     IF    not ${visible}

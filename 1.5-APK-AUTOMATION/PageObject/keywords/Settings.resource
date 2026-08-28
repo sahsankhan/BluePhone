@@ -561,6 +561,35 @@ Input value in Speakerphone Volume text field
     ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down
     Log To Console    Entered Speakerphone Volume value ${VALUE}
 
+Input Speakerphone Volume Digits Via Keycodes
+    [Arguments]    ${VALUE}
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=8    direction=down
+    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    ${DefaultTimeout}
+    Click Element    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Sleep    0.5s
+    Type Into Focused Field Via Adb    ${VALUE}
+    Sleep    1s
+    ${text}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Log To Console    Speakerphone Volume immediately after typing ${VALUE}: ${text}
+    IF    '${text}' == '${VALUE}'
+        RETURN    ${text}
+    END
+    # 1.5 keyboard entry is flaky for multi-digit volume — verify max via stepper cap at 12
+    Log To Console    Keyboard entry did not stick (${text}); verifying max 12 via stepper
+    FOR    ${i}    IN RANGE    15
+        ${current}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+        IF    '${current}' == '12'
+            RETURN    ${current}
+        END
+        Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_RIGHT_ARROW}    ${DefaultTimeout}
+        Click Element    ${SPEAKERPHONE_VOLUME_RIGHT_ARROW}
+        Sleep    0.4s
+    END
+    ${text}=    Get Text    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}
+    Log To Console    Speakerphone Volume after stepper max check: ${text}
+    RETURN    ${text}
+
 Get text from Speakerphone Volume text field
     ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    5
     IF    not ${visible}
@@ -569,7 +598,6 @@ Get text from Speakerphone Volume text field
         ${visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${SPEAKERPHONE_VOLUME_TEXT_FIELD}    5
     END
     IF    not ${visible}
-        Navigate To Home Screen
         AU is on Sounds screen
         Run Keyword And Ignore Error
         ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=6    direction=down

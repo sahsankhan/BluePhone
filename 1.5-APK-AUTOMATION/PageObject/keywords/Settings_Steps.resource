@@ -347,3 +347,21 @@ only numbers can be entered
     Should Match Regexp    ${text}    ^\\d+$
     ...    msg=Speakerphone Volume should remain numeric, got '${text}'
     Log To Console    Speakerphone Volume remains numeric after adjust (${text})
+
+using the numeric keyboard, AU enters a number in the Speakerphone Volume field that is greater than the allowable number of 12 e.g. 15
+    AU is on Sounds screen
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${SPEAKERPHONE_VOLUME_TEXT_FIELD}    max_swipes=8    direction=down
+    Input value in Speakerphone Volume text field    VALUE=15    CLEAR_FIRST=${True}
+    ${text}=    Get text from Speakerphone Volume text field
+    Set Test Variable    ${SPEAKERPHONE_VOLUME_AFTER_15}    ${text}
+
+the number that is greater than 12 is not accepted speakerphone volume in the field
+    Should Not Be Equal As Strings    ${SPEAKERPHONE_VOLUME_AFTER_15}    15
+    ...    msg=Speakerphone Volume accepted 15 but max should be 12
+    Log To Console    Speakerphone Volume rejected 15 (got ${SPEAKERPHONE_VOLUME_AFTER_15})
+
+instead 12 is inserted into speakerphone the field
+    Should Be Equal As Strings    ${SPEAKERPHONE_VOLUME_AFTER_15}    12
+    ...    msg=Expected Speakerphone Volume clamped to 12, got ${SPEAKERPHONE_VOLUME_AFTER_15}
+    Log To Console    Speakerphone Volume clamped to 12
