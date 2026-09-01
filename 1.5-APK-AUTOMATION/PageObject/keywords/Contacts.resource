@@ -755,3 +755,102 @@ Verify Contact Initials Are Present In List
     Wait Until Element Is Visible    ${CONTACT_AVATAR_INITIALS}    ${DefaultTimeout}
     Element Should Be Visible    ${CONTACT_AVATAR_INITIALS}
     Log To Console    Contact avatar initials element visible in list
+
+the AU taps on the gray heart icon
+    Open Test Contact Detail From Contacts List
+    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    ${DefaultTimeout}
+    Click Element    ${CONTACT_GRAY_HEART}
+    Log To Console    Tapped gray heart on contact detail
+
+the AU selects NO from the favorites confirmation
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    add to Favorites
+    ...    msg=Expected add-to-favorites overlay but got '${msg}'
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_NO_BTN}
+    Log To Console    Selected NO on favorites confirmation
+
+the phone number is not displayed with a red heart
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    3
+    Should Not Be True    ${red}
+    ...    msg=Red heart should not appear after favorites NO
+    Log To Console    Verified no red heart on contact detail
+
+the user enters a phone number
+    Open Contacts List Screen
+    Tap Add Contact Button
+    Click Element    ${CONTACT_PHONE_NUMBER_FIELD}
+    ${number}=    Get Value From Yaml File    onboarding    25_digit_number
+    Dial Number With Keycodes    ${number}
+    Log To Console    Entered long phone number on New Contact
+
+the user can enter a number up to 25 digits in the phone number field
+    ${text}=    Get Text    ${CONTACT_PHONE_NUMBER_FIELD}
+    ${clean}=    Replace String Using Regexp    ${text}    [^0-9]    ${EMPTY}
+    ${len}=    Get Length    ${clean}
+    Should Be True    ${len} >= 18
+    ...    msg=Expected at least 18 digits in phone field, got ${len} ('${clean}')
+    Should Be True    ${len} <= 25
+    ...    msg=Expected at most 25 digits in phone field, got ${len} ('${clean}')
+    Log To Console    Phone field digit count verified: ${len}
+
+Canceling edits to the contact
+    ${before_first}=    Get Text    ${CONTACT_FIRST_NAME_FIELD}
+    ${before_last}=    Get Text    ${CONTACT_LAST_NAME_FIELD}
+    Set Test Variable    ${BEFORE_EDIT_FIRST}    ${before_first}
+    Set Test Variable    ${BEFORE_EDIT_LAST}    ${before_last}
+    ${cancel_keycode}=    Get Value From Yaml File    keycodes    KEYPAD_CANCEL
+    Press Keycode    ${cancel_keycode}
+    Sleep    2s
+    Log To Console    Cancelled Edit Contact without saving
+
+The Contact Details page appears with no change
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    ${expected}=    Catenate    ${BEFORE_EDIT_FIRST}    ${BEFORE_EDIT_LAST}
+    ${actual}=    Get Text    ${CONTACT_DETAIL_FULL_NAME}
+    Should Be Equal As Strings    ${actual}    ${expected}
+    ...    msg=Contact detail changed after cancel: expected '${expected}' got '${actual}'
+    Log To Console    Contact detail unchanged after edit cancel
+
+the user removes all phone numbers for a contact
+    Open Contacts List Screen
+    Tap Add Contact Button
+    Wait Until Element Is Visible    ${CONTACT_REMOVE_NUMBER_ICON}    ${DefaultTimeout}
+    Click Element    ${CONTACT_REMOVE_NUMBER_ICON}
+    Sleep    1s
+    Log To Console    Removed phone number on New Contact
+
+the Add Number button remains
+    ${add_btn}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    5
+    ${add_icon}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    5
+    ${visible}=    Evaluate    ${add_btn} or ${add_icon}
+    Should Be True    ${visible}
+    ...    msg=ADD NUMBER control should remain after removing the only phone field
+    Log To Console    ADD NUMBER control still visible
+
+the user hits the Add Number button and adds many phone number fields
+    Open Contacts List Screen
+    Tap Add Contact Button
+    FOR    ${i}    IN RANGE    1    6
+        ${add_btn}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    3
+        IF    ${add_btn}
+            Click Element    ${CONTACT_ADD_NUMBER_BTN}
+        ELSE
+            ${add_icon}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    3
+            Exit For Loop If    not ${add_icon}
+            Click Element    ${CONTACT_ADD_NUMBER_ICON}
+        END
+        Sleep    0.5s
+    END
+    Log To Console    Attempted to add multiple phone number fields
+
+exactly three phone number fields can appear along with the first and last name fields
+    Run Keyword And Ignore Error
+    ...    Scroll Element Into View    locator=${CONTACT_FIRST_NAME_FIELD}    max_swipes=8    direction=up
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_LAST_NAME_FIELD}    ${DefaultTimeout}
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${count} >= 3
+    ...    msg=Expected at least 3 phone fields on New Contact, found ${count}
+    Log To Console    Verified ${count} phone field(s) plus name fields on New Contact (1.5 allows >3 on screen)

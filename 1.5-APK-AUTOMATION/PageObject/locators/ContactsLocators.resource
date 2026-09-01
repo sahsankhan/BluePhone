@@ -37,3 +37,5 @@ ${CONTACT_SEARCH_HEADER_CLOSE}  id=clrcap.CCClient:id/ib_toolbar_cancel
 ${CONTACT_DELETE_CONFIRM_MSG}   id=clrcap.CCClient:id/tvMessage
 ${CONTACT_SCROLL_BAR}           id=clrcap.CCClient:id/fsbContactDetails
 ${CONTACT_AVATAR_INITIALS}      id=clrcap.CCClient:id/txt_avatar_letter
+${CONTACT_GRAY_HEART}           id=clrcap.CCClient:id/cb_favorite
+${CONTACT_RED_HEART}            xpath=//android.widget.ImageView[@content-desc="Favorite selected"]

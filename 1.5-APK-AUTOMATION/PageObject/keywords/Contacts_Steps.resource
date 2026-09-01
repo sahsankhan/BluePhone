@@ -9,6 +9,10 @@ contacts list should be displayed
     Verify Contacts List Is Displayed
 
 the user is registered in Blue phone
+    ${on_home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${DEVICE_NUMBER}    5
+    IF    not ${on_home}
+        Navigate To Home Screen
+    END
     Wait Until Element Is Visible    ${DEVICE_NUMBER}    ${DefaultTimeout}
     Log To Console    Device registered — DID visible on home
 
