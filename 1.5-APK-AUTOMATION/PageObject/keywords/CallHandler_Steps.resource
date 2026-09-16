@@ -14,6 +14,17 @@ the Assisted User answers the call
 the user makes an outbound call
     Generate outbound calls by dialling number and without caption comparison
 
+the user places an outbound call
+    Generate outbound calls by dialling number and without caption comparison
+
+the user makes a secondary outbound call merging the calls
+    Generate secondary outbound calls by tapping on Add button and without caption comparison
+    the user merges the calls
+    Sleep    10s    Allow 3-way merge to stabilize
+
+both calls should be merged successfully into a 3-way call
+    Verify MERGED CALL Text Is Displayed In Header
+
 the captions should be displayed
     Compare Captions    duration=60
 

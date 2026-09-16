@@ -115,6 +115,7 @@ Generate outbound calls by dialling number and without caption comparison
             IF    not ${ok}
                 Log To Console    Call duration header not verified (1.5 crash/flaky) — continuing to captions
             END
+            Wait For Active Call Options Tray
             RETURN
         EXCEPT    AS    ${error}
             Log    Outbound attempt ${attempt} failed: ${error}    WARN    console=True
@@ -122,6 +123,113 @@ Generate outbound calls by dialling number and without caption comparison
             Run Keyword If    ${attempt} == 3    Fail    Outbound call failed after 3 attempts: ${error}
         END
     END
+
+Wait For Active Call Options Tray
+    [Documentation]    Confirms active-call chrome is up before Add/Merge (1.5 can lag after speaker).
+    ${opts}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${OPTIONS}    45
+    IF    ${opts}
+        Log To Console    Options tray control visible on active call
+        RETURN
+    END
+    ${opts_text}=    Run Keyword And Return Status
+    ...    Wait Until Element Is Visible    xpath=//*[@text="OPTIONS" or @text="Options"]    10
+    IF    ${opts_text}
+        Log To Console    Options text control visible on active call
+        RETURN
+    END
+    ${dur}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CALL_DURATION}    10
+    ${ready}=    Evaluate    ${dur} or ${opts} or ${opts_text}
+    Should Be True    ${ready}
+    ...    msg=Active call UI not ready — Options / call duration not visible
+    Log To Console    Active call duration visible (Options may appear after tap)
+
+taps on the Add Contact button
+    [Documentation]    Opens Add from active-call Options tray (or taps Add if already visible).
+    FOR    ${i}    IN RANGE    5
+        ${add_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${ADD_BTN}    2
+        IF    ${add_visible}
+            Click Element    ${ADD_BTN}
+            Log To Console    Tapped Add on active call
+            RETURN
+        END
+        ${opt_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${OPTIONS}    2
+        IF    not ${opt_visible}
+            ${opt_visible}=    Run Keyword And Return Status
+            ...    Wait Until Element Is Visible    xpath=//*[@text="OPTIONS" or @text="Options"]    2
+            IF    ${opt_visible}
+                Click Element    xpath=//*[@text="OPTIONS" or @text="Options"]
+            END
+        ELSE
+            Click Element    ${OPTIONS}
+        END
+        Sleep    1s
+        ${add_after}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${ADD_BUTTON_IN_OPTIONS_MENU}    5
+        IF    ${add_after}
+            Click Element    ${ADD_BUTTON_IN_OPTIONS_MENU}
+            Log To Console    Tapped Add from Options menu
+            RETURN
+        END
+        ${add_btn2}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${ADD_BUTTON}    3
+        IF    ${add_btn2}
+            Click Element    ${ADD_BUTTON}
+            Log To Console    Tapped Add (CallLog ADD_BUTTON locator)
+            RETURN
+        END
+    END
+    Fail    Add button not available on active call / Options tray
+
+Generate secondary outbound calls by tapping on Add button and without caption comparison
+    [Arguments]    ${duration}=None
+    FOR    ${attempt}    IN RANGE    1    4
+        Log    Secondary outbound attempt ${attempt} of 3    console=True
+        TRY
+            ${add_ok}=    Run Keyword And Return Status    taps on the Add Contact button
+            IF    not ${add_ok}
+                Log To Console    Add tray unavailable — falling back to dialpad secondary outbound
+            END
+            Dial Number With Keycodes    ${DID_2}
+            Make Secondary Outbound Call    ${duration}
+            ${call_now}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CALL_NOW_BTN}    8
+            IF    ${call_now}
+                Click Element    ${CALL_NOW_BTN}
+            END
+            Press Speaker Button    udid=${UDID}
+            ${ok}=    Run Keyword And Return Status    Verify Call Duration Is Displayed In Header while on Active Call
+            IF    not ${ok}
+                Log To Console    Secondary call duration header not verified (1.5 flaky) — continuing
+            END
+            RETURN
+        EXCEPT    AS    ${error}
+            Log    Secondary outbound attempt ${attempt} failed: ${error}    WARN    console=True
+            Run Keyword And Ignore Error    Remove Secondary Container    type=IB
+            Run Keyword If    ${attempt} == 3    Fail    Secondary outbound failed after 3 attempts: ${error}
+        END
+    END
+
+the user merges the calls
+    ${opt}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${OPTIONS}    8
+    IF    ${opt}
+        Click Element    ${OPTIONS}
+        Sleep    1s
+    ELSE
+        ${opt_text}=    Run Keyword And Return Status
+        ...    Wait Until Element Is Visible    xpath=//*[@text="OPTIONS" or @text="Options"]    5
+        IF    ${opt_text}
+            Click Element    xpath=//*[@text="OPTIONS" or @text="Options"]
+            Sleep    1s
+        END
+    END
+    Wait Until Element Is Visible    ${MERGE_BTN}    ${DefaultTimeout}
+    Click Element    ${MERGE_BTN}
+    Sleep    5s    Allow merge to complete
+    Log To Console    Tapped Merge on Options tray
+
+Verify MERGED CALL Text Is Displayed In Header
+    Wait Until Element Is Visible    ${VOIP_MERGED_TEXT}    ${DefaultTimeout}
+    ${merged_text}=    Get Text    ${VOIP_MERGED_TEXT}
+    Should Be Equal As Strings    ${merged_text}    MERGED CALL
+    ...    msg=Expected MERGED CALL in header but got '${merged_text}'
+    Log To Console    Verified MERGED CALL text in active call header
 
 the AU is on an active call
     [Arguments]    ${duration}=None

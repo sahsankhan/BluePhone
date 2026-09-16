@@ -149,6 +149,17 @@ TMCC 11136 Test Teardown
     Cleanup VoIP Call Session
     Run Keyword And Ignore Error    Delete The Created Contact
 
+# --- TMCC-11499: 3-way call (first call outbound) ---
+
+TMCC 11499 Test Setup
+    Connecting to BLUphone
+    Remove all call logs
+
+TMCC 11499 Test Teardown
+    Capture Failure Artifacts With SIP Logs
+    Cleanup VoIP Call Session
+    Run Keyword And Ignore Error    Navigate To Home Screen
+
 # --- Scenario_1: Full E2E (11547 + 11490 + 11496 + 11461) ---
 
 Scenario 1 E2E Test Setup
