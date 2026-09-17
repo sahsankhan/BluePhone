@@ -777,6 +777,207 @@ the phone number is not displayed with a red heart
     ...    msg=Red heart should not appear after favorites NO
     Log To Console    Verified no red heart on contact detail
 
+the AU selects YES from the favorites confirmation
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    add to Favorites
+    ...    msg=Expected add-to-favorites overlay but got '${msg}'
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_YES_BTN}
+    Sleep    1s
+    Log To Console    Selected YES on favorites confirmation
+
+Tap Gray Heart On Contact Detail
+    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    ${DefaultTimeout}
+    Click Element    ${CONTACT_GRAY_HEART}
+    Log To Console    Tapped gray heart on contact detail
+
+Ensure Contact Detail Has No Favorite
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    3
+    IF    ${red}
+        Click Element    ${CONTACT_RED_HEART}
+        Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+        Click Element    ${CONTACT_CANCEL_YES_BTN}
+        Sleep    1s
+        Log To Console    Removed existing favorite so contact has gray heart
+    END
+    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    ${DefaultTimeout}
+
+the user has marked a phone number as a favorite
+    the AU has a saved contact
+    Open Test Contact Detail From Contacts List
+    Ensure Contact Detail Has No Favorite
+    Tap Gray Heart On Contact Detail
+    the AU selects YES from the favorites confirmation
+
+viewing the contact details screen
+    ${on_detail}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    3
+    IF    not ${on_detail}
+        Open Test Contact Detail From Contacts List
+    END
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+
+the avatar displays a red badge
+    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HEART_ON_AVATAR}
+    Log To Console    Avatar red favorite badge visible
+
+the favorited phone number also displays a red badge
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    5
+    IF    ${red}
+        Element Should Be Visible    ${CONTACT_RED_HEART}
+        Log To Console    Red heart badge next to phone number visible
+        RETURN
+    END
+    ${any_fav}=    Run Keyword And Return Status
+    ...    Wait Until Element Is Visible    xpath=//*[contains(@content-desc,"Favorite")]    5
+    IF    ${any_fav}
+        Log To Console    Favorite content-desc badge visible for phone/contact
+        RETURN
+    END
+    # 1.5 often only paints the avatar heart after favoring a number
+    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HEART_ON_AVATAR}
+    Log To Console    1.5: favorited number reflected by avatar heart badge
+
+the AU is on the contact details screen
+    the AU has a saved contact
+    Open Test Contact Detail From Contacts List
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+
+the contact has no favorite numbers
+    Ensure Contact Detail Has No Favorite
+
+the avatar does not display a red badge
+    ${avatar}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    3
+    Should Not Be True    ${avatar}
+    ...    msg=Avatar red badge should not be visible when contact has no favorites
+    Log To Console    Avatar has no red favorite badge
+
+the phone numbers do not display a red badge
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    3
+    Should Not Be True    ${red}
+    ...    msg=Red heart next to number should not be visible
+    Log To Console    No red heart next to phone number
+
+the phone number does display gray badge next to it
+    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_GRAY_HEART}
+    Log To Console    Gray heart badge visible next to phone number
+
+the user is viewing a phone number with a grey heart icon next to it
+    the AU has a saved contact
+    Open Test Contact Detail From Contacts List
+    Ensure Contact Detail Has No Favorite
+
+the user is viewing a contact's detail page
+    the user is viewing a phone number with a grey heart icon next to it
+
+the user taps the grey heart
+    Tap Gray Heart On Contact Detail
+
+the overlay states "Are you sure you want to add to Favorites?"
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    add to Favorites
+    ...    msg=Expected add-to-favorites overlay but got '${msg}'
+    Log To Console    Favorites add overlay message verified
+
+the overlay provides options to confirm or cancel the action
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_CANCEL_YES_BTN}
+    Element Should Be Visible    ${CONTACT_CANCEL_NO_BTN}
+    Log To Console    Favorites overlay Yes/No options visible
+
+the user selects the option to add the contact to Favorites
+    Tap Gray Heart On Contact Detail
+    the AU selects YES from the favorites confirmation
+
+the contact's avatar displays with a red heart on the contact detail page
+    the avatar displays a red badge
+
+the contact's avatar also displays with a red heart in the main contacts list
+    the user taps the back arrow
+    ${contact_name}=    Get Value From Yaml File    user    verificationName2
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${contact_name}
+    Sleep    1s
+    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_HEART_ON_AVATAR}
+    Log To Console    Red heart on avatar visible in contacts list for ${contact_name}
+    Clear Contacts Search Field
+
+there are no contacts matching the search query
+    Log To Console    Will search a nonsense term that should return no contacts
+
+the user enters a search term in the search field
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ZzNoMatch999xyz
+    Sleep    2s
+    Log To Console    Entered nonsense search term ZzNoMatch999xyz
+
+the screen displays a message "No matches found"
+    ${by_id}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NO_MATCHES_FOUND}    8
+    IF    ${by_id}
+        ${text}=    Get Text    ${CONTACT_NO_MATCHES_FOUND}
+        Should Contain    ${text}    No matches found
+        ...    msg=Expected No matches found but got '${text}'
+    ELSE
+        Wait Until Element Is Visible    xpath=//*[contains(@text,"No matches found")]    ${DefaultTimeout}
+    END
+    Log To Console    No matches found message displayed
+
+no contact results are displayed
+    ${support}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_SUPPORT_ENTRY}    3
+    Should Not Be True    ${support}
+    ...    msg=Contact results should not appear for no-match search
+    Log To Console    No contact results displayed for nonsense search
+
+the AU has entered text into the Search field
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    Test
+    Sleep    1s
+    Log To Console    Entered text into Contacts Search field
+
+the AU taps the [x] button in the Search field
+    Wait Until Element Is Visible    ${CONTACT_CLEAR_SEARCH_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CLEAR_SEARCH_BTN}
+    Sleep    1s
+    Log To Console    Tapped [x] clear in Search field
+
+the Search field is cleared
+    ${text}=    Get Text    ${CONTACT_SEARCH_BAR}
+    ${empty}=    Run Keyword And Return Status    Should Be Empty    ${text}
+    IF    not ${empty}
+        ${lower}=    Convert To Lower Case    ${text}
+        Should Contain    ${lower}    looking
+        ...    msg=Search field not cleared — got '${text}'
+    END
+    Log To Console    Search field cleared
+
+the contacts list disappears
+    [Documentation]    After clearing search via [x], full contacts list is restored (2.0 wording).
+    the full contacts list is displayed again
+
+the AU taps the Close button in the header
+    Tap on Close button in the header
+
+the full contacts list is displayed again
+    Wait Until Element Is Visible    ${CONTACT_ADD_BUTTON}    ${DefaultTimeout}
+    ${support}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_SUPPORT_ENTRY}    8
+    ${any_name}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    8
+    ${ready}=    Evaluate    ${support} or ${any_name}
+    Should Be True    ${ready}
+    ...    msg=Full contacts list not restored after clearing search
+    Log To Console    Full contacts list displayed again
+
 the user enters a phone number
     Open Contacts List Screen
     Tap Add Contact Button

@@ -161,3 +161,23 @@ Verify Voicemail Inbox Is Empty
     ${inbox_empty}=    Evaluate    ${empty_id} or ${empty_text}
     Should Be True    ${inbox_empty}    Expected empty voicemail inbox message but none was shown.
     Should Not Be True    ${row_visible}    Voicemail message rows are still visible after delete.
+
+the user opens Voicemail app
+    Open Voicemail App From Home
+    Run Keyword And Ignore Error    Wait until loading spinner gets disappears from the VM list screen
+
+the voicemail screen should open
+    ${home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${VM_HOME_BUTTON}    15
+    ${empty}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${NO_MESSAGES}    5
+    ${row}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${FIRST_RECENT_VOICEMAIL}    5
+    ${edit}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${VM_EDIT_BUTTON}    5
+    ${ready}=    Evaluate    ${home} or ${empty} or ${row} or ${edit}
+    Should Be True    ${ready}
+    ...    msg=Voicemail main screen did not open
+    Log To Console    Voicemail screen opened
+
+the following features should be displayed:a Home button at the bottom of the screen
+    Wait Until Element Is Visible    ${VM_HOME_BUTTON}    ${DefaultTimeout}
+    Element Should Be Visible    ${VM_HOME_BUTTON}
+    Log To Console    Voicemail Home button visible at bottom
+

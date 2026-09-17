@@ -39,3 +39,4 @@ ${CONTACT_SCROLL_BAR}           id=clrcap.CCClient:id/fsbContactDetails
 ${CONTACT_AVATAR_INITIALS}      id=clrcap.CCClient:id/txt_avatar_letter
 ${CONTACT_GRAY_HEART}           id=clrcap.CCClient:id/cb_favorite
 ${CONTACT_RED_HEART}            xpath=//android.widget.ImageView[@content-desc="Favorite selected"]
+${CONTACT_NO_MATCHES_FOUND}     id=clrcap.CCClient:id/tv_empty

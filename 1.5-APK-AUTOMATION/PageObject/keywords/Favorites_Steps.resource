@@ -11,6 +11,9 @@ the user clicks on the Favorites App
 add contact to favorite
     Ensure ClearCaptions Favorite Exists
 
+ensure at least one contact is marked as a favorite
+    Ensure ClearCaptions Favorite Exists
+
 taps on the Edit button
     Tap Favorites Edit Button
 
