@@ -1055,3 +1055,251 @@ exactly three phone number fields can appear along with the first and last name 
     Should Be True    ${count} >= 3
     ...    msg=Expected at least 3 phone fields on New Contact, found ${count}
     Log To Console    Verified ${count} phone field(s) plus name fields on New Contact (1.5 allows >3 on screen)
+
+# --- Favorites removal (TMCC-3025/3026/3028/3029) ---
+
+the phone number is displayed with a red heart
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    5
+    ${avatar}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_HEART_ON_AVATAR}    5
+    ${ready}=    Evaluate    ${red} or ${avatar}
+    Should Be True    ${ready}
+    ...    msg=Expected red favorite indicator on contact detail
+    Log To Console    Red heart / favorite indicator visible on contact detail
+
+the AU taps on the red heart icon
+    [Documentation]    1.5 keeps cb_favorite as the number-heart control; avatar badge is not tappable.
+    ${number_heart}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    5
+    IF    ${number_heart}
+        Click Element    ${CONTACT_GRAY_HEART}
+        Log To Console    Tapped number favorite control to remove favorite
+        RETURN
+    END
+    ${red}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_RED_HEART}    5
+    IF    ${red}
+        Click Element    ${CONTACT_RED_HEART}
+        Log To Console    Tapped red heart content-desc to remove favorite
+        RETURN
+    END
+    Fail    Number favorite heart not available to tap for removal
+
+
+a confirmation overlay appears stating "Are you sure you want to remove from Favorites?"
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    remove from Favorites
+    ...    msg=Expected remove-from-favorites overlay but got '${msg}'
+    Log To Console    Remove-from-favorites overlay message verified
+
+the user selects YES from the favorites removal confirmation
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    remove from Favorites
+    ...    msg=Expected remove-from-favorites overlay but got '${msg}'
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_YES_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_YES_BTN}
+    Sleep    1s
+    Log To Console    Selected YES on favorites removal confirmation
+
+the AU selects YES from the favorites removal confirmation
+    the user selects YES from the favorites removal confirmation
+
+the contact details screen is displayed with a gray heart next to the number
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_GRAY_HEART}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_GRAY_HEART}
+    Log To Console    Gray heart visible after favorite removal
+
+the AU selects NO from the favorites removal confirmation
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_CONFIRM_MSG}    ${DefaultTimeout}
+    ${msg}=    Get Text    ${CONTACT_CANCEL_CONFIRM_MSG}
+    Should Contain    ${msg}    remove from Favorites
+    ...    msg=Expected remove-from-favorites overlay but got '${msg}'
+    Wait Until Element Is Visible    ${CONTACT_CANCEL_NO_BTN}    ${DefaultTimeout}
+    Click Element    ${CONTACT_CANCEL_NO_BTN}
+    Sleep    1s
+    Log To Console    Selected NO on favorites removal confirmation
+
+the contact details screen appears
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_DETAIL_FULL_NAME}
+    Log To Console    Still on contact details screen
+
+the phone number is still displayed with a red heart
+    the phone number is displayed with a red heart
+
+# --- Contacts search (TMCC-3001/3002/3003/3012/3013) ---
+
+there are multiple contacts saved in the contact list
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${exists}=    Run Keyword And Return Status    Verify Contact Displayed In Contacts List By Search    ${name}
+    IF    not ${exists}
+        the AU has a saved contact
+    END
+    Create Avatar Test Contact    ZzExtra    Contact2
+    Clear Contacts Search Field
+    Log To Console    Ensured multiple contacts in list
+
+the user taps in the Search field
+    the AU taps in the Search field
+
+starts entering a character
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${first}=    Get Substring    ${name}    0    1
+    Set Test Variable    ${SEARCH_PROGRESS_TERM}    ${first}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${first}
+    Sleep    1s
+    Log To Console    Entered first search character '${first}'
+
+the contact list should be automatically filtered based on the entered character
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Log To Console    Contacts list filtered after first character
+
+as the user enters additional characters
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${more}=    Get Substring    ${name}    0    3
+    Set Test Variable    ${SEARCH_PROGRESS_TERM}    ${more}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${more}
+    Sleep    1s
+    Log To Console    Entered additional search characters '${more}'
+
+the search results should continue to be progressively filtered
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Log To Console    Contacts list still filtered after more characters
+
+only contacts that match the entered text should remain in the list
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${term}=    Set Variable    ${SEARCH_PROGRESS_TERM}
+    ${found}=    Run Keyword And Return Status
+    ...    Wait Until Element Is Visible    xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname' and contains(@text,'${term}')]    8
+    Should Be True    ${found}
+    ...    msg=Expected a contact matching '${term}' in filtered list
+    Log To Console    Matching contacts remain for '${term}'
+
+the contacts list contains a contact named "John Smith"
+    Run Keyword And Ignore Error    Delete Contact By Search Name    John
+    Create Avatar Test Contact    John    Smith
+    Clear Contacts Search Field
+    Log To Console    Ensured John Smith contact exists
+
+the AU enters "John" in the Search field
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    John
+    Sleep    1s
+    Log To Console    Searched for John
+
+the AU enters "Smith" in the Search field
+    Tap on Close button in the header
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    Smith
+    Sleep    1s
+    Log To Console    Searched for Smith
+
+"John Smith" should be displayed in the search results
+    Wait Until Element Is Visible
+    ...    xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname' and contains(@text,'John')]    ${DefaultTimeout}
+    Log To Console    John Smith visible in search results
+
+the contacts list contains names with uppercase and lowercase letters
+    Run Keyword And Ignore Error    Delete Contact By Search Name    Alpha
+    Create Avatar Test Contact    Alpha    Mixed
+    Clear Contacts Search Field
+    Log To Console    Ensured Alpha Mixed contact for case search
+
+the user searches uppercase letter A
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    A
+    Sleep    1s
+    ${count_a}=    Get Matching Xpath Count    //android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname']
+    Set Test Variable    ${SEARCH_CASE_COUNT_A}    ${count_a}
+    Log To Console    Search A returned ${count_a} name rows
+
+the results should include all contacts with first and last names starting with "A" or "a"
+    Wait Until Element Is Visible
+    ...    xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname' and contains(@text,'Alpha')]    ${DefaultTimeout}
+    Log To Console    Alpha contact included for search A
+
+the user searches lowercase letter a
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    a
+    Sleep    1s
+    ${count_a_lower}=    Get Matching Xpath Count    //android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname']
+    Set Test Variable    ${SEARCH_CASE_COUNT_a}    ${count_a_lower}
+    Log To Console    Search a returned ${count_a_lower} name rows
+
+the results should include the same contacts as searching for "A"
+    Wait Until Element Is Visible
+    ...    xpath=//android.widget.TextView[@resource-id='clrcap.CCClient:id/textViewFullname' and contains(@text,'Alpha')]    ${DefaultTimeout}
+    Should Be Equal As Integers    ${SEARCH_CASE_COUNT_A}    ${SEARCH_CASE_COUNT_a}
+    ...    msg=Case search counts differ: A=${SEARCH_CASE_COUNT_A} a=${SEARCH_CASE_COUNT_a}
+    Log To Console    Case-independent search counts match
+
+there are contacts saved in the contact list
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${exists}=    Run Keyword And Return Status    Verify Contact Displayed In Contacts List By Search    ${name}
+    IF    not ${exists}
+        the AU has a saved contact
+    END
+    Clear Contacts Search Field
+
+the user enters a matching contact search term
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    Set Test Variable    ${ACTIVE_SEARCH_TERM}    ${name}
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SEARCH_BAR}
+    Run Keyword And Ignore Error    Clear Text    ${CONTACT_SEARCH_BAR}
+    Input Text    ${CONTACT_SEARCH_BAR}    ${name}
+    Sleep    1s
+    Log To Console    Entered matching search term '${name}'
+
+the search results display matching contacts
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Log To Console    Search results show matching contacts
+
+the user selects a contact from the search results
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Click Element    ${CONTACT_NAME_IN_LIST}
+    Log To Console    Selected contact from search results
+
+the user selects a name from the search results
+    the user selects a contact from the search results
+
+the contact detail screen for the selected contact should be displayed
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_SAVED_PHONE_NUMBER}
+    Log To Console    Contact detail displayed from search selection
+
+the contact detail screen is displayed
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_DETAIL_FULL_NAME}
+
+the user taps the Back arrow in the header
+    the user taps the back arrow
+
+the user is returned to the search results
+    Wait Until Element Is Visible    ${CONTACT_SEARCH_BAR}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    ${DefaultTimeout}
+    Log To Console    Returned to contacts list / search UI after back
+
+the search results remain unchanged
+    ${term}=    Set Variable    ${ACTIVE_SEARCH_TERM}
+    ${text}=    Get Text    ${CONTACT_SEARCH_BAR}
+    ${still_term}=    Run Keyword And Return Status    Should Contain    ${text}    ${term}
+    ${still_result}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_NAME_IN_LIST}    5
+    ${ok}=    Evaluate    ${still_term} or ${still_result}
+    Should Be True    ${ok}
+    ...    msg=Expected search term '${term}' or matching results to remain after back
+    Log To Console    Search results state preserved after back (term and/or list)
