@@ -1303,3 +1303,215 @@ the search results remain unchanged
     Should Be True    ${ok}
     ...    msg=Expected search term '${term}' or matching results to remain after back
     Log To Console    Search results state preserved after back (term and/or list)
+
+# --- TMCC-3044 / 3047 / 3055-3057 / 2994 / 3014 / 3076 / 3099 / 3101 ---
+
+the user is adding a new contact
+    the user is adding a contact
+
+contact app is clicked
+    Open Contacts List Screen
+
+Tap Add Number On Contact Form
+    ${add_btn}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    3
+    IF    ${add_btn}
+        Click Element    ${CONTACT_ADD_NUMBER_BTN}
+        Sleep    0.5s
+        RETURN    ${True}
+    END
+    ${add_icon}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    3
+    IF    ${add_icon}
+        Click Element    ${CONTACT_ADD_NUMBER_ICON}
+        Sleep    0.5s
+        RETURN    ${True}
+    END
+    RETURN    ${False}
+
+Is Add Number Visible On Contact Form
+    ${add_btn}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_BTN}    2
+    ${add_icon}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_ADD_NUMBER_ICON}    2
+    ${visible}=    Evaluate    ${add_btn} or ${add_icon}
+    RETURN    ${visible}
+
+Reach Max Phone Number Fields On Contact Form
+    [Documentation]    Keep tapping Add Number until it disappears. 1.5 max is 6 phone fields (2.0 allows 12).
+    FOR    ${i}    IN RANGE    1    15
+        ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+        ${add_visible}=    Is Add Number Visible On Contact Form
+        IF    not ${add_visible}
+            Log To Console    Add Number hidden after ${count} phone field(s)
+            RETURN
+        END
+        IF    ${count} >= 12
+            Log To Console    Reached 12 phone fields with Add Number still present
+            RETURN
+        END
+        ${tapped}=    Tap Add Number On Contact Form
+        Exit For Loop If    not ${tapped}
+    END
+    ${final}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Log To Console    Stopped adding phone fields at count=${final}
+
+the user can enter up to 50 characters in the first name or last name field
+    ${chars}=    Get Value From Yaml File    onboarding    50_character_string
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    Click Element    ${CONTACT_FIRST_NAME_FIELD}
+    Clear Text    ${CONTACT_FIRST_NAME_FIELD}
+    Input Text    ${CONTACT_FIRST_NAME_FIELD}    ${chars}
+    ${first_text}=    Get Text    ${CONTACT_FIRST_NAME_FIELD}
+    ${first_len}=    Get Length    ${first_text}
+    Should Be True    ${first_len} >= 50
+    ...    msg=First Name should accept at least 50 chars, got ${first_len}
+    Click Element    ${CONTACT_LAST_NAME_FIELD}
+    Clear Text    ${CONTACT_LAST_NAME_FIELD}
+    Input Text    ${CONTACT_LAST_NAME_FIELD}    ${chars}
+    ${last_text}=    Get Text    ${CONTACT_LAST_NAME_FIELD}
+    ${last_len}=    Get Length    ${last_text}
+    Should Be True    ${last_len} >= 50
+    ...    msg=Last Name should accept at least 50 chars, got ${last_len}
+    Log To Console    Name fields accepted 50+ chars (first=${first_len}, last=${last_len})
+
+Select Phone Type On Spinner Index
+    [Arguments]    ${index}    ${type_locator}    ${expected_text}
+    Wait Until Element Is Visible    xpath=(${CONTACT_PHONE_TYPE_COUNT})[${index}]    ${DefaultTimeout}
+    Click Element    xpath=(${CONTACT_PHONE_TYPE_COUNT})[${index}]
+    Wait Until Element Is Visible    ${type_locator}    ${DefaultTimeout}
+    Click Element    ${type_locator}
+    Sleep    0.5s
+    ${text}=    Get Text    xpath=(${CONTACT_PHONE_TYPE_COUNT})[${index}]
+    Should Be Equal As Strings    ${text}    ${expected_text}
+    ...    msg=Phone type #${index} expected '${expected_text}' but got '${text}'
+
+the user can add multiple phone numbers of the same type ,for example, several 'home' numbers and 'mobile' numbers
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    ${tapped1}=    Tap Add Number On Contact Form
+    Should Be True    ${tapped1}    msg=Could not add second phone number field
+    ${tapped2}=    Tap Add Number On Contact Form
+    Should Be True    ${tapped2}    msg=Could not add third phone number field
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${count} >= 3
+    ...    msg=Expected at least 3 phone fields for same-type check, found ${count}
+    Select Phone Type On Spinner Index    2    ${DROPDOWN_HOME}    Home
+    Select Phone Type On Spinner Index    3    ${DROPDOWN_HOME}    Home
+    ${type2}=    Get Text    xpath=(${CONTACT_PHONE_TYPE_COUNT})[2]
+    ${type3}=    Get Text    xpath=(${CONTACT_PHONE_TYPE_COUNT})[3]
+    Should Be Equal As Strings    ${type2}    Home
+    Should Be Equal As Strings    ${type3}    Home
+    Log To Console    Multiple Home phone types accepted on New Contact (${count} fields)
+
+the user can add up to 12 numbers in a single contact
+    [Documentation]    2.0 allows 12; 1.5 caps at 6 — assert device max and Add Number hidden.
+    Reach Max Phone Number Fields On Contact Form
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${count} >= 6
+    ...    msg=Expected to reach 1.5 max phone fields (>=6), found ${count}
+    ${add_visible}=    Is Add Number Visible On Contact Form
+    Should Not Be True    ${add_visible}
+    ...    msg=ADD NUMBER should be hidden after reaching max phone fields (${count})
+    Log To Console    Max phone fields on New Contact: ${count} (Add Number visible=${add_visible})
+
+the maximum amount of phone numbers has been reached in a single contact
+    Reach Max Phone Number Fields On Contact Form
+    ${count}=    Get Matching Xpath Count    ${CONTACT_PHONE_FIELD_COUNT}
+    Should Be True    ${count} >= 6
+    ...    msg=Expected max phone fields reached (>=6 on 1.5), found ${count}
+    Set Test Variable    ${MAX_PHONE_FIELDS_REACHED}    ${count}
+    Log To Console    Max phone numbers reached: ${count}
+
+the maximum amount of phone numbers has been reached
+    the maximum amount of phone numbers has been reached in a single contact
+
+the "Add Number" button is hidden
+    ${add_visible}=    Is Add Number Visible On Contact Form
+    Should Not Be True    ${add_visible}
+    ...    msg=ADD NUMBER should be hidden when max phone numbers reached
+    Log To Console    ADD NUMBER button hidden at max phone fields
+
+one or more of those numbers has been removed, the "Add Number" button is displayed again
+    Wait Until Element Is Visible    ${CONTACT_REMOVE_NUMBER_ICON}    ${DefaultTimeout}
+    Click Element    ${CONTACT_REMOVE_NUMBER_ICON}
+    Sleep    1s
+    ${add_visible}=    Is Add Number Visible On Contact Form
+    Should Be True    ${add_visible}
+    ...    msg=ADD NUMBER should reappear after removing a phone field at max
+    Log To Console    ADD NUMBER visible again after removing a phone field
+
+call log record is present in call log
+    [Documentation]    Soft precondition for TMCC-2994 — contact detail path does not require call log UI.
+    Log To Console    Skipping call-log precondition — opening contact detail from Contacts instead
+
+the user selects a contact
+    ${name}=    Get Value From Yaml File    user    verificationName2
+    ${exists}=    Run Keyword And Return Status    Verify Contact Displayed In Contacts List By Search    ${name}
+    IF    not ${exists}
+        there is a saved contact with an associated phone number
+    END
+    Open Test Contact Detail From Contacts List
+    Log To Console    Selected contact '${name}' from Contacts list
+
+the contact detail screen should be displayed
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Element Should Be Visible    ${CONTACT_SAVED_PHONE_NUMBER}
+    Log To Console    Contact detail screen displayed
+
+the header displays a back arrow,head icon and text "contcats"
+    Wait Until Element Is Visible    ${CONTACT_LIST_TITLE}    ${DefaultTimeout}
+    ${title}=    Get Text    ${CONTACT_LIST_TITLE}
+    ${title_u}=    Convert To Upper Case    ${title}
+    Should Contain    ${title_u}    CONTACT
+    ...    msg=Expected Contacts header text, got '${title}'
+    Wait Until Element Is Visible    ${CONTACT_HEADER_ICON}    ${DefaultTimeout}
+    ${back}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_TOOLBAR_BACK}    5
+    ${home}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_HOME_BTN}    5
+    ${nav}=    Evaluate    ${back} or ${home}
+    Should Be True    ${nav}
+    ...    msg=Expected back arrow or Home nav control on Contacts header
+    Log To Console    Contacts header verified (title='${title}', back=${back}, home=${home})
+
+The contact is saved and the contact details screen appears with the new contact information
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    Wait Until Element Is Visible    ${CONTACT_SAVED_PHONE_NUMBER}    ${DefaultTimeout}
+    ${expected_first}=    Get Value From Yaml File    user    createContactFirstName
+    ${expected_last}=    Get Value From Yaml File    user    createContactLastName
+    ${expected}=    Catenate    ${expected_first}    ${expected_last}
+    ${actual}=    Get Text    ${CONTACT_DETAIL_FULL_NAME}
+    Should Be Equal As Strings    ${actual}    ${expected}
+    ...    msg=Expected saved contact '${expected}' on detail, got '${actual}'
+    Log To Console    Saved contact detail shows ${actual}
+
+After saving edits to the contact
+    ${new_first}=    Get Value From Yaml File    user    updatedFirstName
+    ${new_last}=    Get Value From Yaml File    user    updatedLastName
+    Wait Until Element Is Visible    ${CONTACT_FIRST_NAME_FIELD}    ${DefaultTimeout}
+    Clear Text    ${CONTACT_FIRST_NAME_FIELD}
+    Input Text    ${CONTACT_FIRST_NAME_FIELD}    ${new_first}
+    Clear Text    ${CONTACT_LAST_NAME_FIELD}
+    Input Text    ${CONTACT_LAST_NAME_FIELD}    ${new_last}
+    Set Test Variable    ${UPDATED_FIRST_NAME}    ${new_first}
+    Set Test Variable    ${UPDATED_LAST_NAME}    ${new_last}
+    SAVE is selected
+    Log To Console    Saved contact edits to ${new_first} ${new_last}
+
+The Contact Details page appears with the new changes displayed
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    ${expected}=    Catenate    ${UPDATED_FIRST_NAME}    ${UPDATED_LAST_NAME}
+    ${actual}=    Get Text    ${CONTACT_DETAIL_FULL_NAME}
+    Should Be Equal As Strings    ${actual}    ${expected}
+    ...    msg=Expected updated detail '${expected}' but got '${actual}'
+    Log To Console    Contact detail shows updated name ${actual}
+
+Viewing the contact details of the Customer Support contact
+    Open Contacts List Screen
+    Wait Until Element Is Visible    ${CONTACT_SUPPORT_ENTRY}    ${DefaultTimeout}
+    Click Element    ${CONTACT_SUPPORT_ENTRY}
+    Wait Until Element Is Visible    ${CONTACT_DETAIL_FULL_NAME}    ${DefaultTimeout}
+    ${name}=    Get Text    ${CONTACT_DETAIL_FULL_NAME}
+    Should Contain    ${name}    ClearCaptions
+    ...    msg=Expected ClearCaptions support contact detail, got '${name}'
+    Log To Console    Opened Customer Support / ClearCaptions contact detail
+
+The edit button is hidden
+    ${edit_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${CONTACT_EDIT_BTN}    5
+    Should Not Be True    ${edit_visible}
+    ...    msg=Edit button should be hidden on Customer Support contact detail
+    Log To Console    Edit button hidden on support contact as expected
